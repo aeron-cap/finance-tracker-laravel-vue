@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\BudgetTypeController;
@@ -34,6 +35,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/incomes', 'index');
         Route::post('/income', 'store');
         Route::post('/income/{id}', 'update');
+        // delete income, use Softdeletes
+    });
+
+    Route::controller(AccountController::class)->group(function () {
+        Route::get('/account/{id}', 'show');
+        Route::post('/accounts', 'index');
+        Route::post('/account', 'store');
+        Route::post('/account/{id}', 'update');
         // delete income, use Softdeletes
     });
 

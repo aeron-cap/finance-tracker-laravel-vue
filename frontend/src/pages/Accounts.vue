@@ -1,68 +1,99 @@
 <template>
-    <main>
-        <header class="bg-white shadow">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h1 class="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                    Accounts
-                </h1>
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20" :class="{ 'blur-sm': showModal }">
+        <div class="container mx-auto px-4 rounded-lg">
+            <div v-if="loading" class="flex justify-center items-center py-8">
+                <div role="status">
+                    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C0 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                    </svg>
+                    <span class="sr-only">Loading...</span>
+                </div>
             </div>
-        </header>
-        <div class="mt-5 flex lg:mt-0 lg:ml-4">
-        <!-- <span class="hidden sm:block">
-            <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-            <PencilIcon class="mr-1.5 -ml-0.5 size-5 text-gray-400" aria-hidden="true" />
-            Edit
-            </button>
-        </span>
 
-        <span class="ml-3 hidden sm:block">
-            <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-            <LinkIcon class="mr-1.5 -ml-0.5 size-5 text-gray-400" aria-hidden="true" />
-            View
-            </button>
-        </span>
+            <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mx-4 my-4">
+                <strong>Error:</strong> {{ error }}
+            </div>
 
-        <span class="sm:ml-3">
-            <button type="button" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            <CheckIcon class="mr-1.5 -ml-0.5 size-5" aria-hidden="true" />
-            Publish
-            </button>
-        </span> -->
+            <div v-else class="relative overflow-x-auto overflow-y-auto">
+                <div v-if="accounts_data.length === 0" class="place-items-center pt-6 pb-6">
+                    <div>
+                        <span class="px-6 py-4 text-center text-gray-500"> No accounts found </span>
+                    </div>
+                </div>
 
-        <!-- Dropdown -->
-        <!-- <Menu as="div" class="relative ml-3 sm:hidden">
-            <MenuButton class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:ring-gray-400">
-            More
-            <ChevronDownIcon class="-mr-1 ml-1.5 size-5 text-gray-400" aria-hidden="true" />
-            </MenuButton>
+                <!-- <div class="grid grid-cols-2 pt-6 pb-6 md:grid-cols-3 gap-4">
+                    <div v-for="(budget, index) in budgets_data" class="h-auto max-w-full rounded-lg">
+                        <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                            <a>
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ budget.budget_name }}</h5>
+                            </a>
+                            <p class="font-normal text-gray-700 dark:text-gray-400">Php {{ budget.amount_to_budget }}</p>
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ budget.cutoff.name }}</p>
+                            <button 
+                                @click="edit_budget(budget.id)" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                type="button" 
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div> -->
 
-            <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-            <MenuItems class="absolute left-0 z-10 mt-2 -mr-1 w-24 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-hidden">
-                <MenuItem v-slot="{ active }">
-                <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">Edit</a>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                <a href="#" :class="[active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm text-gray-700']">View</a>
-                </MenuItem>
-            </MenuItems>
-            </transition>
-        </Menu> -->
+            </div>
         </div>
-    </main>
+
+        <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-lg dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10">
+            <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+                <button 
+                    @click="create_account" 
+                    :disabled="loading"
+                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 disabled:opacity-50">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+                        Create Account
+                    </span>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- add accounts modal -->
+    <!-- <BudgetModal :show="showModal" :id="budget_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" /> -->
 </template>
 
 <script setup>
-import {
-  BriefcaseIcon,
-  CalendarIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  CurrencyDollarIcon,
-  LinkIcon,
-  MapPinIcon,
-  PencilIcon,
-} from '@heroicons/vue/20/solid'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { onMounted, ref } from 'vue';
+import axios from '../lib/axios';
+
+const accounts_data = ref([]);
+const loading = ref(false);
+const error = ref(null);
+const showModal = ref(false);
+
+onMounted(() => {
+    get_all_accounts();
+});
+
+async function get_all_accounts() {
+    loading.value = true;
+    error.value = null;
+
+    try {
+        const response = await axios.post('api/accounts');
+        accounts_data.value = response.data.accounts || [];
+    } catch (err) {
+        error.value = err.response?.data?.message || err.message || 'Failed to load accounts';
+    }
+    finally{
+        loading.value = false;
+    }
+}
+
+function create_account() {
+    showModal.value = true;
+}
+
 </script>
 
 <style lang="scss" scoped>

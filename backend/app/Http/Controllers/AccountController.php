@@ -58,9 +58,22 @@ class AccountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
         //
+        $user = $request->user();
+        $account = Account::where('id', $id)->with('status')->where('user_id', $user->id)->first();
+
+        if (!$account) {
+            return response()->json([
+                'message' => 'Account not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Account found',
+            'account' => $account,
+        ], 200);
     }
 
     /**

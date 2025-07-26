@@ -59,17 +59,19 @@
     </div>
 
     <!-- add accounts modal -->
-    <!-- <BudgetModal :show="showModal" :id="budget_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" /> -->
+    <AccountModal :show="showModal" :id="account_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" />
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from '../lib/axios';
+import AccountModal from '../components/AccountModal.vue';
 
 const accounts_data = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const showModal = ref(false);
+const account_id = ref(false);
 
 onMounted(() => {
     get_all_accounts();
@@ -91,7 +93,21 @@ async function get_all_accounts() {
 }
 
 function create_account() {
+    account_id.value = null;
     showModal.value = true;
+}
+
+function close_modal() {
+    showModal.value = false;
+}
+
+function handle_decline() {
+    showModal.value = false;
+}
+
+function handle_accept() {
+  showModal.value = false;
+  get_all_accounts();
 }
 
 </script>

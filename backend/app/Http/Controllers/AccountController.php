@@ -82,13 +82,46 @@ class AccountController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $user = $request->user();
+
+        $account = $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+            'status_id' => 'required',
+        ]);
+
+        $existing_a = Account::where('id', $id)->first();
+
+        $a = auto_update($existing_a, $account, ['user_id' => $user->id]);
+
+        if ($a->update()){
+          return response()->json([
+              'message' => 'Account updated successfully',
+              'account' => $a,
+          ], 201);
+        } else {
+          return response()->json(['message' => 'Failed to edit account'], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         //
+      $account = Account::find($id);
+
+      if (!$account) {
+        return response()->json([
+          'message' => 'Account not found',
+        ], 404);
+      } else {
+        $account->delete();
+
+        return response()->json([
+          'message' => 'Account deleted',
+        ], 200);
+      }
     }
 }

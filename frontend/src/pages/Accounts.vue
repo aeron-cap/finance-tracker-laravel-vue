@@ -21,26 +21,27 @@
                         <span class="px-6 py-4 text-center text-gray-500"> No accounts found </span>
                     </div>
                 </div>
-
-                <!-- <div class="grid grid-cols-2 pt-6 pb-6 md:grid-cols-3 gap-4">
-                    <div v-for="(budget, index) in budgets_data" class="h-auto max-w-full rounded-lg">
-                        <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                            <a>
-                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ budget.budget_name }}</h5>
-                            </a>
-                            <p class="font-normal text-gray-700 dark:text-gray-400">Php {{ budget.amount_to_budget }}</p>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ budget.cutoff.name }}</p>
-                            <button 
-                                @click="edit_budget(budget.id)" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                type="button" 
-                            >
-                                Edit
-                            </button>
-                        </div>
+                <div class="grid pt-6 pb-6 grid-cols-1 md:grid-cols-2 gap-4">
+                  <div v-for="(account, index) in accounts_data" class="w-full h-auto rounded-lg">
+                    <div class="w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                      <a>
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                          {{ account.name }}
+                        </h5>
+                      </a>
+                      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        {{ account.description }}
+                      </p>
+                      <button
+                        @click="edit_account(account.id)"
+                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        type="button"
+                      >
+                        Edit
+                      </button>
                     </div>
-                </div> -->
-
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -99,6 +100,7 @@ function create_account() {
 
 function close_modal() {
     showModal.value = false;
+    get_all_accounts();
 }
 
 function handle_decline() {
@@ -108,6 +110,11 @@ function handle_decline() {
 function handle_accept() {
   showModal.value = false;
   get_all_accounts();
+}
+
+function edit_account(id) {
+  account_id.value = id;
+  showModal.value = true;
 }
 
 </script>

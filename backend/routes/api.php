@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/accounts', 'index');
         Route::post('/account', 'store');
         Route::post('/account/{id}', 'update');
+        Route::post('/account-delete/{id}', 'destroy');
         // delete income, use Softdeletes
     });
 

@@ -162,7 +162,13 @@ function decline_action() {
 }
 
 function delete_account() {
-  emit('close');
+  if(props.id > 0) {
+    try {
+      axios.post(`/api/account-delete/${props.id}`, account_data.value).then((response) => {
+        close_modal();
+      });
+  } catch (err) {}
+  }
 }
 
 function accept_action() {
@@ -173,7 +179,9 @@ function accept_action() {
 
   if (props.id > 0) {
     try {
-      // update
+      axios.post(`api/account/${props.id}`, account_data.value).then((response) => {
+        console.log(response);
+      })
     }catch (error) {}
   } else {
     try {
@@ -193,6 +201,10 @@ async function get_statuses() {
     const response = await axios.get('api/statuses');
     statuses.value = response.data.status || [];
   }catch (error) {}
+}
+
+function close_modal() {
+    emit('close');
 }
 
 </script>

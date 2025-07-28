@@ -65,6 +65,7 @@ const navigation = [
   { name: 'Budgets', to: {name: 'Budgets'}},
   { name: 'Investments', to: {name: 'Investments'}},
   { name: 'Accounts', to: {name: 'Accounts'}},
+  { name: 'Incomes', to: {name: 'Incomes'}},
 ]
 </script>
 

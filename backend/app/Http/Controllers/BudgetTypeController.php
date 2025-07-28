@@ -10,10 +10,17 @@ class BudgetTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $budget_types = BudgetType::all();
+        $type = $request->get('type');
+
+        if ($type !== null) {
+            $budget_types = BudgetType::all()->where('type', $type);
+        } else {
+            $budget_types = BudgetType::all();
+        }
+
 
         if ($budget_types->isEmpty()) {
             return response()->json([

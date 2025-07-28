@@ -8,6 +8,7 @@ import Budgets from "./pages/Budgets.vue";
 import Accounts from "./pages/Accounts.vue";
 import Investments from "./pages/Investments.vue";
 import axios from "./lib/axios";
+import Incomes from "./pages/Incomes.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -35,6 +36,7 @@ const router = createRouter({
                 {path: '/budgets', name:'Budgets', component: Budgets},
                 {path: '/investments', name:'Investments', component: Investments},
                 {path: '/accounts', name:'Accounts', component: Accounts},
+                {path: '/incomes', name: 'Incomes', component: Incomes}
             ]
         },
     ]

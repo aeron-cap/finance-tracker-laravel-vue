@@ -94,7 +94,6 @@
 import { onMounted, ref, watch } from 'vue';
 import axios from '../lib/axios';
 
-
 onMounted(() => {
     // entities to load
     get_statuses();

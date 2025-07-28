@@ -130,7 +130,6 @@
                                             type="radio"
                                             value="Income"
                                             v-model="detail.type"
-                                            @change="filter_detail_type_dropdown(index)"
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                         />
                                         <span class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Income</span>
@@ -142,7 +141,6 @@
                                             type="radio"
                                             value="Expense"
                                             v-model="detail.type"
-                                            @change="filter_detail_type_dropdown(index)"
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                         />
                                         <span class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Expense</span>
@@ -151,7 +149,7 @@
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
+                                    <div v-if= "detail.type == 'Income'">
                                         <label :for="`budget-type-${index}`" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Budget Type</label>
                                         <select 
                                             :id="`budget-type-${index}`"
@@ -161,7 +159,25 @@
                                             required>
                                             <option value="" disabled>Choose budget type</option>
                                             <option 
-                                                v-for="type in detail.budget_types" 
+                                                v-for="type in income_budget_types" 
+                                                :key="type.id" 
+                                                :value="type.id">
+                                                {{ type.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div v-else>
+                                        <label :for="`budget-type-${index}`" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Budget Type</label>
+                                        <select 
+                                            :id="`budget-type-${index}`"
+                                            v-model="detail.budget_type_id"
+                                            @change="update_budget_type(index)"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            required>
+                                            <option value="" disabled>Choose budget type</option>
+                                            <option 
+                                                v-for="type in expense_budget_types" 
                                                 :key="type.id" 
                                                 :value="type.id">
                                                 {{ type.name }}
@@ -258,7 +274,8 @@ const budget_data = ref({
 
 const statuses = ref([]);
 const cutoff_types = ref([]);
-const budget_types = ref([]);
+const income_budget_types = ref([]);
+const expense_budget_types = ref([]);
 
 watch(() => props.show, (newValue) => {
     if (!newValue || props.id == null) {
@@ -268,7 +285,7 @@ watch(() => props.show, (newValue) => {
         budget_data.value.amount_to_budget = '';
         budget_data.value.cutoff_type = null;
         budget_data.value.cutoff_type_name = '';
-        budget_data.value.budget_date = '';
+        budget_data.value.budget_date = new Date().toISOString().slice(0, 10);
         budget_data.value.budget_details = [];
     }
 
@@ -326,8 +343,9 @@ async function get_cutoff_types() {
 
 async function get_budget_types() {
     try {
-        const response = await axios.get('api/budget_types');
-        budget_types.value = response.data.budget_types || [];
+        const response = await axios.post('api/budget_types');
+        income_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Income");
+        expense_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Expense");
     } catch (error) {}
 }
 
@@ -346,7 +364,14 @@ function update_cutoff_type() {
 }
 
 function update_budget_type(index) {
-    const selectedType = budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
+    let selectedType = null;
+
+    if (budget_data.value.budget_details[index].type == "Income") {
+        selectedType = income_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
+    } else {
+        selectedType = expense_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
+    }
+
     if (selectedType) {
         budget_data.value.budget_details[index].budget_type_name = selectedType.name;
     }
@@ -359,7 +384,6 @@ function filter_detail_type_dropdown(index) {
 
 function add_budget_detail() {
     budget_data.value.budget_details.push({
-        budget_types: budget_types,
         budget_type_id: null,
         budget_type_name: '',
         description: '',

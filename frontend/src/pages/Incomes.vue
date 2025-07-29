@@ -16,10 +16,78 @@
             </div>
 
             <div v-else class="relative overflow-x-auto overflow-y-auto">
-                  <div v-if="incomes_data.length === 0" class="place-items-center pt-6 pb-6">
+                <div v-if="incomes_data.length === 0" class="place-items-center pt-6 pb-6">
                     <div>
                         <span class="px-6 py-4 text-center text-gray-500"> No income records found </span>
                     </div>
+                </div>
+                <div class="mt-6 mb-6">
+                  <div v-for="(income, index) in incomes_data" class="w-full h-auto rounded-lg">
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">
+                                        Product name
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Color
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Category
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Price
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Apple MacBook Pro 17"
+                                    </th>
+                                    <td class="px-6 py-4">
+                                        Silver
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        Laptop
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        $2999
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Microsoft Surface Pro
+                                    </th>
+                                    <td class="px-6 py-4">
+                                        White
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        Laptop PC
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        $1999
+                                    </td>
+                                </tr>
+                                <tr class="bg-white dark:bg-gray-800">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Magic Mouse 2
+                                    </th>
+                                    <td class="px-6 py-4">
+                                        Black
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        Accessories
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        $99
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -62,7 +130,7 @@ async function get_all_incomes() {
 
   try {
     const response = await axios.post('api/incomes');
-    incomes_data.value = response.data.incomes || [];
+    incomes_data.value = response.data.income || [];
   } catch (error) {
     error.value = error.response?.data?.message || error.message || 'Failed to load incomes'  
   } finally {
@@ -82,6 +150,7 @@ function close_modal() {
 
 function handle_decline() {
     showModal.value = false;
+    get_all_incomes();
 }
 
 

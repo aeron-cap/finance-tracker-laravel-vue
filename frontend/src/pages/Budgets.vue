@@ -96,6 +96,7 @@ function create_budget() {
 
 function close_modal() {
     showModal.value = false;
+    get_all_budgets();
 }
 
 function edit_budget(id) {
@@ -103,15 +104,14 @@ function edit_budget(id) {
     budget_id.value = id;
 }
 
-function handle_accept(budgetData) {
-    console.log("Budget creation accepted", budgetData);
+function handle_accept() {
     close_modal();
 }
 
 function handle_decline() {
-    console.log("Budget creation declined");
     close_modal();
 }
+
 </script>
 
 <style lang="scss" scoped>

@@ -22,66 +22,44 @@
                     </div>
                 </div>
                 <div class="mt-6 mb-6">
-                  <div v-for="(income, index) in incomes_data" class="w-full h-auto rounded-lg">
+                  <div class="w-full h-auto rounded-lg">
                     <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">
-                                        Product name
+                                        Date
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Color
+                                        Budget
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Category
+                                        Type
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Price
+                                        Account
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Amount
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Apple MacBook Pro 17"
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Silver
+                            <tbody v-for="(income, index) in incomes_data">
+                                <tr @click="edit_record(income.id)" class="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ income.income_date }}
                                     </td>
-                                    <td class="px-6 py-4">
-                                        Laptop
+                                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ income.budget_name }}
                                     </td>
-                                    <td class="px-6 py-4">
-                                        $2999
+                                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ income.budget_type_name }}
                                     </td>
-                                </tr>
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Microsoft Surface Pro
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        White
+                                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ income.account_name }}
                                     </td>
-                                    <td class="px-6 py-4">
-                                        Laptop PC
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $1999
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-gray-800">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Magic Mouse 2
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Black
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        Accessories
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $99
+                                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ income.amount }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -143,14 +121,22 @@ function create_record() {
   showModal.value = true;
 }
 
+function edit_record(id) {
+  income_id.value = id;
+  showModal.value = true;
+}
+
 function close_modal() {
-    showModal.value = false;
-    get_all_accounts();
+  showModal.value = false;
+  get_all_incomes();
 }
 
 function handle_decline() {
-    showModal.value = false;
-    get_all_incomes();
+  close_modal();
+}
+
+function handle_accept() {
+  close_modal();
 }
 
 

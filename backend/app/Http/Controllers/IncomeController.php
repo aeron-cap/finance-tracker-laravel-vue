@@ -46,6 +46,8 @@ class IncomeController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
+            'budget_id' => 'required|numeric',
+            'budget_name' => 'required',
         ]);
 
         $i = auto_create(Income::class, $income, ['user_id' => $user->id]);
@@ -100,6 +102,8 @@ class IncomeController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
+            'budget_id' => 'required|numeric',
+            'budget_name' => 'required',
         ]);
 
         $existing_i = Income::where('id', $id)->first();
@@ -120,8 +124,21 @@ class IncomeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         //
+        $income = Income::find($id);
+
+        if (!$income) {
+            return response()->json([
+                'message' => 'Income not found',
+            ], 404);
+        } else {
+            $income->delete();
+
+            return response()->json([
+                'message' => 'Income deleted',
+            ], 200);
+        }
     }
 }

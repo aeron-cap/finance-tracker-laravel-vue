@@ -16,7 +16,7 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <div class="p-4 md:p-5 space-y-6">
+                <div :class="{ 'disabled-div': loading }" class="p-4 md:p-5 space-y-6">
                     <form @submit.prevent="accept_action" class="space-y-6">
                         <!-- Account Information Section -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -64,7 +64,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <div :class="{ 'disabled-div': loading }" class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button 
                         @click="accept_action" 
                         type="button" 
@@ -120,6 +120,7 @@ const account_data = ref({
 });
 
 const statuses = ref([]);
+const loading =ref(false);
 
 watch(() => props.show, (newValue) => {
     if (!newValue || props.id == null) {
@@ -136,6 +137,7 @@ watch(() => props.show, (newValue) => {
 })
 
 async function get_account_data(id) {
+  loading.value = true;
   try {
     const response = await axios.get(`api/account/${id}`);
     let account_from_db = response.data.account || [];
@@ -147,6 +149,7 @@ async function get_account_data(id) {
   } catch (error) {
     console.error('Error fetching accounts', error);
   }
+  loading.value = false;
 };
 
 function set_account_data(data) {
@@ -180,19 +183,23 @@ function accept_action() {
     try {
       axios.post(`api/account/${props.id}`, account_data.value).then((response) => {
         console.log(response);
+
+        emit('accept', {
+          ...account_data.value
+        });
       })
     }catch (error) {}
   } else {
     try {
       axios.post("api/account", account_data.value).then((response) => {
         console.log(response);
+    
+        emit('accept', {
+          ...account_data.value
+        });
       })
     } catch (error) {}
   }
-
-  emit('accept', {
-    ...account_data.value
-  });
 }
 
 async function get_statuses() {
@@ -208,6 +215,9 @@ function close_modal() {
 
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+  .disabled-div {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 </style>

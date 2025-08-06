@@ -8,7 +8,7 @@
                     </h3>
                     <button 
                         type="button" 
-                        @click="decline_action"
+                        @click="close_modal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -16,7 +16,7 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <div class="p-4 md:p-5 space-y-6">
+                <div :class="{ 'disabled-div': loading }" class="p-4 md:p-5 space-y-6">
                     <form @submit.prevent="accept_action" class="space-y-6">
                         <!-- Income Information Section -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -119,12 +119,13 @@
 
                     </form>
                 </div>
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button 
+                <div :class="{ 'disabled-div': loading }" class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button
                         @click="accept_action" 
                         type="button" 
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Create Income Record
+                        <span v-if="props.id !== null"> Update Income Record </span>
+                        <span v-if="props.id == null"> Create Income Record </span>
                     </button>
                     <button 
                         @click="decline_action" 
@@ -158,6 +159,7 @@ onMounted(() => {
 const accounts = ref([]);
 const income_budget_types = ref([]);
 const budgets = ref([]);
+const loading = ref(false);
 
 const props = defineProps({
   show: {
@@ -183,6 +185,7 @@ const income_data = ref({
   status_id: 1,
   status_name: 'New',
   budget_id: null,
+  budget_name: '',
 })
 
 watch(() => props.show, (newValue) => {
@@ -196,9 +199,43 @@ watch(() => props.show, (newValue) => {
     income_data.value.description = '',
     income_data.value.status_id = 1,
     income_data.value.status_name = 'New',
-    income_data.value.budget_id = ''
+    income_data.value.budget_id = '',
+    income_data.value.budget_name = ''
+  }
+
+    if (props.id > 0) {
+      get_budget_types();
+      get_income_data(props.id);
   }
 })
+
+async function get_income_data(id) {
+  loading.value = true;
+  try {
+    const response = await axios.get(`api/income/${id}`);
+    let income_from_db = response.data.income || [];
+
+    if (Object.keys(income_from_db).length > 0) {
+      set_income_data(income_from_db);
+    }
+
+  } catch (err) {}
+  loading.value = false;
+}
+
+function set_income_data (data) {
+  income_data.value.income_date = data.income_date;
+  income_data.value.budget_type_id = data.budget_type_id;
+  income_data.value.budget_type_name = data.budget_type_name;
+  income_data.value.account_id = data.account_id;
+  income_data.value.account_name = data.account_name;
+  income_data.value.amount = data.amount;
+  income_data.value.description = data.description;
+  income_data.value.status_id = data.status_id;
+  income_data.value.status_name = data.status_name;
+  income_data.value.budget_id = data.budget_id;
+  income_data.value.budget_name = data.budget_name;
+}
 
 async function get_accounts() {
   try {
@@ -250,12 +287,13 @@ function update_account() {
 }
 
 function update_budget_name() {
+  console.log(budgets.value, income_data.value.budget_id);
   const selected_budget = budgets.value.find(
     j => j.id === income_data.value.budget_id
   );
 
   if (selected_budget) {
-    income_data.value.budget_name = selected_budget.name;
+    income_data.value.budget_name = selected_budget.budget_name;
   } else {
     income_data.value.budget_name = '';
   }
@@ -269,7 +307,16 @@ function close_modal() {
   emit('close');
 }
 
-// ToDo: save function and table view for incomes, and also edit
+function delete_record() {
+    if(props.id > 0) {
+      try {
+          axios.post(`/api/income-delete/${props.id}`, income_data.value).then((response) => {
+              close_modal();
+          });
+      } catch (err) {}
+  }
+}
+
 function accept_action() {
   if (
     !income_data.value.income_date || 
@@ -281,7 +328,8 @@ function accept_action() {
     !income_data.value.description ||
     !income_data.value.status_id ||
     !income_data.value.status_name ||
-    !income_data.value.budget_id
+    !income_data.value.budget_id || 
+    !income_data.value.budget_name
   ) {
     alert('Please fill in all required budget fields');
     return;
@@ -291,22 +339,29 @@ function accept_action() {
     try {
       axios.post(`/api/income/${props.id}`, income_data.value).then((response) => {
         console.log(response);
+
+        emit('accept', {
+          ...income_data.value
+        });
       });
     } catch (err) {}
   } else {
     try {
       axios.post('/api/income', income_data.value).then((response) => {
         console.log(response);
+
+        emit('accept', {
+          ...income_data.value
+        });
       });
     } catch (err) {}
   }
-
-  emit('accept', {
-    ...income_data.value
-  });
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+  .disabled-div {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 </style>

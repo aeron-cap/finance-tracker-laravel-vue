@@ -102,7 +102,7 @@ class BudgetController extends Controller
     {
         //
         $user = $request->user();
-        
+
         $budget = $request->validate([
             'status_id' => 'required',
             'status_name' => 'required',
@@ -147,7 +147,7 @@ class BudgetController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id, Request $requestd)
+    public function destroy(string $id, Request $request)
     {
         //
         $budget = Budget::find($id);
@@ -158,7 +158,7 @@ class BudgetController extends Controller
             ], 404);
         } else {
             $budget->delete();
-            
+
             return response()->json([
                 'message' => 'Budget deleted',
             ], 200);

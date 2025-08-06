@@ -16,7 +16,7 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <div class="p-4 md:p-5 space-y-6">
+                <div :class="{ 'disabled-div': loading }" class="p-4 md:p-5 space-y-6">
                     <form @submit.prevent="accept_action" class="space-y-6">
                         <!-- Budget Information Section -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -212,7 +212,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <div :class="{ 'disabled-div': loading }" class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button 
                         @click="accept_action" 
                         type="button" 
@@ -276,6 +276,7 @@ const statuses = ref([]);
 const cutoff_types = ref([]);
 const income_budget_types = ref([]);
 const expense_budget_types = ref([]);
+const loading = ref(false);
 
 watch(() => props.show, (newValue) => {
     if (!newValue || props.id == null) {
@@ -296,6 +297,7 @@ watch(() => props.show, (newValue) => {
 });
 
 async function get_budget_data(id){
+  loading.value = true;
     try {
         const response = await axios.get(`api/budget/${id}`);
         let budget_from_db = response.data.budget || [];
@@ -307,6 +309,7 @@ async function get_budget_data(id){
     } catch (error) {
         console.error('Error fetching statuses:', error);
     }
+  loading.value = false;
 }
 
 function set_budget_data(data) {
@@ -408,6 +411,7 @@ function delete_budget() {
 }
 
 function accept_action() {
+  loading.value = true;
     if (!budget_data.value.budget_name || !budget_data.value.status_id || !budget_data.value.amount_to_budget || !budget_data.value.cutoff_type || !budget_data.value.budget_date) {
         alert('Please fill in all required budget fields');
         return;
@@ -425,19 +429,24 @@ function accept_action() {
         try {
             axios.post(`/api/budget/${props.id}`, budget_data.value).then((response) => {
                 console.log(response);
+
+                emit('accept', {
+                    ...budget_data.value,
+                });
             });
         } catch (err) {}
     } else {
         try {
             axios.post('/api/budget', budget_data.value).then((response) => {
                 console.log(response);
+
+                emit('accept', {
+                    ...budget_data.value,
+                });
             });
         } catch (err) {}
     }
-
-    emit('accept', {
-        ...budget_data.value,
-    });
+  loading.value = false;
 }
 
 function decline_action() {
@@ -450,5 +459,9 @@ function close_modal() {
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+  .disabled-div {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 </style>

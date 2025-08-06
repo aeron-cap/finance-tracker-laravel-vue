@@ -47,12 +47,6 @@ router.beforeEach((to, from) => {
         return true;
     }
 
-    if (!localStorage.getItem('token')) {
-        return {
-            name: 'Login'
-        }
-    }
-
     checkTokenAuthenticity();
 })
 

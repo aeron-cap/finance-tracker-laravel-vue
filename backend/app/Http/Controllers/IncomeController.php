@@ -14,7 +14,10 @@ class IncomeController extends Controller
     {
         //
         $user = $request->user();
-        $incomes = Income::where('user_id', $user->id)->get();
+        $skip = $request->get('skip');
+        $take = $skip + 30;
+
+        $incomes = Income::skip($skip)->take($take)->orderBy('income_date', 'desc')->where('user_id', $user->id)->get();
 
         if (!$incomes) {
             return response()->json([

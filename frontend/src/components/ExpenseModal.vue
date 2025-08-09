@@ -4,7 +4,7 @@
             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Create Income Record
+                        Create Expense Record
                     </h3>
                     <button 
                         type="button" 
@@ -18,16 +18,16 @@
                 </div>
                 <div :class="{ 'disabled-div': loading }" class="p-4 md:p-5 space-y-6">
                     <form @submit.prevent="accept_action" class="space-y-6">
-                        <!-- Income Information Section -->
+                        <!-- Expense Information Section -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Income Information</h4>
+                            <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Expense Information</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="Income-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Income Date</label>
+                                    <label for="expense-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">expense Date</label>
                                     <input 
                                       type="date" 
-                                      id="income-date" 
-                                      v-model="income_data.income_date"
+                                      id="expense-date" 
+                                      v-model="expense_data.expense_date"
                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                       required>
                                 </div>
@@ -38,13 +38,13 @@
                                     </label>
                                     <select 
                                       :id="`budget-type`"
-                                      v-model="income_data.budget_type_id"
+                                      v-model="expense_data.budget_type_id"
                                       @change="update_budget_type()"
                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                       required>
                                       <option value=null></option>
                                       <option 
-                                          v-for="type in income_budget_types" 
+                                          v-for="type in expense_budget_types" 
                                           :key="type.id" 
                                           :value="type.id">
                                           {{ type.name }}
@@ -57,7 +57,7 @@
                                   <input 
                                       type="number" 
                                       id="amount" 
-                                      v-model="income_data.amount"
+                                      v-model="expense_data.amount"
                                       step="0.01"
                                       min="0"
                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
@@ -69,7 +69,7 @@
                                     <label for="account-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Account</label>
                                     <select 
                                         id="account-select" 
-                                        v-model="income_data.account_id"
+                                        v-model="expense_data.account_id"
                                         @change="update_account()"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         required>
@@ -87,7 +87,7 @@
                                     <label for="budget-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Budget</label>
                                     <select 
                                         id="budget-select" 
-                                        v-model="income_data.budget_id"
+                                        v-model="expense_data.budget_id"
                                         @change="update_budget_name()"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         >
@@ -105,10 +105,10 @@
                                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                                   <textarea 
                                       id="description"
-                                      v-model="income_data.description"
+                                      v-model="expense_data.description"
                                       rows="2" 
                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                      placeholder="Describe this income record..."></textarea>
+                                      placeholder="Describe this expense record..."></textarea>
                                 </div>
 
                             </div>
@@ -124,8 +124,8 @@
                         @click="accept_action" 
                         type="button" 
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <span v-if="props.id !== null"> Update Income Record </span>
-                        <span v-if="props.id == null"> Create Income Record </span>
+                        <span v-if="props.id !== null"> Update expense Record </span>
+                        <span v-if="props.id == null"> Create expense Record </span>
                     </button>
                     <button 
                         @click="decline_action" 
@@ -157,7 +157,7 @@ onMounted(() => {
 });
 
 const accounts = ref([]);
-const income_budget_types = ref([]);
+const expense_budget_types = ref([]);
 const budgets = ref([]);
 const loading = ref(false);
 
@@ -174,8 +174,8 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'accept', 'decline']);
 
-const income_data = ref({
-  income_date: '',
+const expense_data = ref({
+  expense_date: '',
   budget_type_id: null,
   budget_type_name: '',
   account_id: null,
@@ -190,51 +190,51 @@ const income_data = ref({
 
 watch(() => props.show, (newValue) => {
   if (!newValue || props.id == null) {
-    income_data.value.income_date = new Date().toISOString().slice(0, 10);
-    income_data.value.budget_type_id = null,
-    income_data.value.budget_type_name = '',
-    income_data.value.account_id = null,
-    income_data.value.account_name = '',
-    income_data.value.amount = null,
-    income_data.value.description = '',
-    income_data.value.status_id = 1,
-    income_data.value.status_name = 'New',
-    income_data.value.budget_id = '',
-    income_data.value.budget_name = ''
+    expense_data.value.expense_date = new Date().toISOString().slice(0, 10);
+    expense_data.value.budget_type_id = null,
+    expense_data.value.budget_type_name = '',
+    expense_data.value.account_id = null,
+    expense_data.value.account_name = '',
+    expense_data.value.amount = null,
+    expense_data.value.description = '',
+    expense_data.value.status_id = 1,
+    expense_data.value.status_name = 'New',
+    expense_data.value.budget_id = '',
+    expense_data.value.budget_name = ''
   }
 
     if (props.id > 0) {
       get_budget_types();
-      get_income_data(props.id);
+      get_expense_data(props.id);
   }
 })
 
-async function get_income_data(id) {
+async function get_expense_data(id) {
   loading.value = true;
   try {
-    const response = await axios.get(`api/income/${id}`);
-    let income_from_db = response.data.income || [];
+    const response = await axios.get(`api/expense/${id}`);
+    let expense_from_db = response.data.expense || [];
 
-    if (Object.keys(income_from_db).length > 0) {
-      set_income_data(income_from_db);
+    if (Object.keys(expense_from_db).length > 0) {
+      set_expense_data(expense_from_db);
     }
 
   } catch (err) {}
   loading.value = false;
 }
 
-function set_income_data (data) {
-  income_data.value.income_date = data.income_date;
-  income_data.value.budget_type_id = data.budget_type_id;
-  income_data.value.budget_type_name = data.budget_type_name;
-  income_data.value.account_id = data.account_id;
-  income_data.value.account_name = data.account_name;
-  income_data.value.amount = data.amount;
-  income_data.value.description = data.description;
-  income_data.value.status_id = data.status_id;
-  income_data.value.status_name = data.status_name;
-  income_data.value.budget_id = data.budget_id;
-  income_data.value.budget_name = data.budget_name;
+function set_expense_data (data) {
+  expense_data.value.expense_date = data.expense_date;
+  expense_data.value.budget_type_id = data.budget_type_id;
+  expense_data.value.budget_type_name = data.budget_type_name;
+  expense_data.value.account_id = data.account_id;
+  expense_data.value.account_name = data.account_name;
+  expense_data.value.amount = data.amount;
+  expense_data.value.description = data.description;
+  expense_data.value.status_id = data.status_id;
+  expense_data.value.status_name = data.status_name;
+  expense_data.value.budget_id = data.budget_id;
+  expense_data.value.budget_name = data.budget_name;
 }
 
 async function get_accounts() {
@@ -247,9 +247,9 @@ async function get_accounts() {
 
 function get_budget_types() {
   try {
-    axios.post('api/budget_types', {type: 'Income'}).then((response) => {
+    axios.post('api/budget_types', {type: 'Expense'}).then((response) => {
       const raw = response.data.budget_types || {};
-      income_budget_types.value = Array.isArray(raw) ? raw : Object.values(raw);
+      expense_budget_types.value = Array.isArray(raw) ? raw : Object.values(raw);
     })
   }catch (error) {}
 }
@@ -263,39 +263,39 @@ async function get_budgets() {
 }
 
 function update_budget_type() {
-  const selected_budget_type = income_budget_types.value.find(
-    j => j.id === income_data.value.budget_type_id
+  const selected_budget_type = expense_budget_types.value.find(
+    j => j.id === expense_data.value.budget_type_id
   );
 
   if (selected_budget_type) {
-    income_data.value.budget_type_name = selected_budget_type.name;
+    expense_data.value.budget_type_name = selected_budget_type.name;
   } else {
-    income_data.value.budget_type_name = '';
+    expense_data.value.budget_type_name = '';
   }
 }
 
 function update_account() {
   const selected_account = accounts.value.find(
-    j => j.id === income_data.value.account_id
+    j => j.id === expense_data.value.account_id
   );
 
   if (selected_account) {
-    income_data.value.account_name = selected_account.name;
+    expense_data.value.account_name = selected_account.name;
   } else {
-    income_data.value.account_name = '';
+    expense_data.value.account_name = '';
   }
 }
 
 function update_budget_name() {
-  console.log(budgets.value, income_data.value.budget_id);
+  console.log(budgets.value, expense_data.value.budget_id);
   const selected_budget = budgets.value.find(
-    j => j.id === income_data.value.budget_id
+    j => j.id === expense_data.value.budget_id
   );
 
   if (selected_budget) {
-    income_data.value.budget_name = selected_budget.budget_name;
+    expense_data.value.budget_name = selected_budget.budget_name;
   } else {
-    income_data.value.budget_name = '';
+    expense_data.value.budget_name = '';
   }
 }
 
@@ -310,7 +310,7 @@ function close_modal() {
 function delete_record() {
     if(props.id > 0) {
       try {
-          axios.post(`/api/income-delete/${props.id}`, income_data.value).then((response) => {
+          axios.post(`/api/expense-delete/${props.id}`, expense_data.value).then((response) => {
               close_modal();
           });
       } catch (err) {}
@@ -319,17 +319,17 @@ function delete_record() {
 
 function accept_action() {
   if (
-    !income_data.value.income_date || 
-    !income_data.value.budget_type_id || 
-    !income_data.value.budget_type_name || 
-    !income_data.value.account_id || 
-    !income_data.value.account_name ||
-    !income_data.value.amount ||
-    !income_data.value.description ||
-    !income_data.value.status_id ||
-    !income_data.value.status_name ||
-    !income_data.value.budget_id || 
-    !income_data.value.budget_name
+    !expense_data.value.expense_date || 
+    !expense_data.value.budget_type_id || 
+    !expense_data.value.budget_type_name || 
+    !expense_data.value.account_id || 
+    !expense_data.value.account_name ||
+    !expense_data.value.amount ||
+    !expense_data.value.description ||
+    !expense_data.value.status_id ||
+    !expense_data.value.status_name ||
+    !expense_data.value.budget_id || 
+    !expense_data.value.budget_name
   ) {
     alert('Please fill in all required budget fields');
     return;
@@ -337,21 +337,21 @@ function accept_action() {
 
   if(props.id > 0) {
     try {
-      axios.post(`/api/income/${props.id}`, income_data.value).then((response) => {
+      axios.post(`/api/expense/${props.id}`, expense_data.value).then((response) => {
         console.log(response);
 
         emit('accept', {
-          ...income_data.value
+          ...expense_data.value
         });
       });
     } catch (err) {}
   } else {
     try {
-      axios.post('/api/income', income_data.value).then((response) => {
+      axios.post('/api/expense', expense_data.value).then((response) => {
         console.log(response);
 
         emit('accept', {
-          ...income_data.value
+          ...expense_data.value
         });
       });
     } catch (err) {}

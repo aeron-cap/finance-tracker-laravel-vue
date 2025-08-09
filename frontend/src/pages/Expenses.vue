@@ -1,11 +1,11 @@
 <template>
     <div class="h-fit bg-gray-50 dark:bg-gray-900 pb-20">
-        <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
+          <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
             <!-- Page Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Incomes</h1>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Expense</h1>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Manage your Income flow
+                    Manage your Expense flow
                 </p>
             </div>
 
@@ -24,9 +24,9 @@
             </div>
 
             <div v-else class="relative overflow-x-auto overflow-y-auto">
-                <div v-if="incomes_data.length === 0" class="place-items-center pt-6 pb-6">
+                <div v-if="expenses_data.length === 0" class="place-items-center pt-6 pb-6">
                     <div>
-                        <span class="px-6 py-4 text-center text-gray-500"> No income records found </span>
+                        <span class="px-6 py-4 text-center text-gray-500"> No expense records found </span>
                     </div>
                 </div>
                 <div v-else class="mt-6 mb-6">
@@ -52,22 +52,22 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody v-for="(income, index) in incomes_data">
-                                <tr @click="edit_record(income.id)" class="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                            <tbody v-for="(expense, index) in expenses_data">
+                                <tr @click="edit_record(expense.id)" class="cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ income.income_date }}
+                                        {{ expense.expense_date }}
                                     </td>
                                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ income.budget_name }}
+                                        {{ expense.budget_name }}
                                     </td>
                                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ income.budget_type_name }}
+                                        {{ expense.budget_type_name }}
                                     </td>
                                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ income.account_name }}
+                                        {{ expense.account_name }}
                                     </td>
                                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ income.amount }}
+                                        {{ expense.amount }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -77,47 +77,66 @@
                 </div>
             </div>
         </div>
+
+        <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-lg dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10">
+            <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+                <button 
+                    @click="create_record" 
+                    :disabled="loading"
+                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 disabled:opacity-50">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+                        Create Record
+                    </span>
+                </button>
+            </div>
+        </footer>
     </div>
-    <IncomeModal :show="showModal" :id=income_id @close="handle_decline" @accept="handle_accept" @decline="handle_decline" />
+
+    <ExpenseModal :show="showModal" :id="expense_id" @close="handle_decline" @accept="handle_accept" @decline="handle_decline" />
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from '../lib/axios';
-import IncomeModal from '../components/IncomeModal.vue';
+import ExpenseModal from '../components/ExpenseModal.vue';
 
 const loading = ref(false);
 const error = ref(null);
-const incomes_data = ref([]);
+const expenses_data = ref([]);
 const showModal = ref(false);
-const income_id = ref(false);
+const expense_id = ref(false);
 
 onMounted(() => {
-  get_all_incomes();
+  get_all_expenses();
 });
 
-async function get_all_incomes() {
+async function get_all_expenses() {
   loading.value = true;
   error.value = null;
 
   try {
-    const response = await axios.post('api/incomes');
-    incomes_data.value = response.data.income || [];
+    const response = await axios.post('api/expenses');
+    expenses_data.value = response.data.expense || [];
   } catch (error) {
-    error.value = error.response?.data?.message || error.message || 'Failed to load incomes'  
+    error.value = error.response?.data?.message || error.message || 'Failed to load expenses'  
   } finally {
     loading.value = false;
   }
 }
 
+function create_record() {
+  expense_id.value = null;
+  showModal.value = true;
+}
+
 function edit_record(id) {
-  income_id.value = id;
+  expense_id.value = id;
   showModal.value = true;
 }
 
 function close_modal() {
   showModal.value = false;
-  get_all_incomes();
+  get_all_expenses();
 }
 
 function handle_decline() {

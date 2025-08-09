@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/expenses', 'index');
         Route::post('/expense', 'store');
         Route::post('/expense/{id}', 'update');
-        // delete expense, use Softdeletes
+        Route::post('/expense-delete/{id}', 'destroy');
     });
 
     Route::controller(StatusController::class)->group(function () {

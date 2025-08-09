@@ -1,11 +1,12 @@
 <template>
-    <header class="bg-white shadow">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 class="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                Dashboard
-            </h1>
+    <div class="bg-gray-50 dark:bg-gray-900 pb-20">
+        <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Manage and track your budgets
+            </p>
         </div>
-    </header>
+    </div>
 </template>
 
 <script setup>

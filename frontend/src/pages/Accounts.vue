@@ -1,6 +1,14 @@
 <template>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20" :class="{ 'blur-sm': showModal }">
-        <div class="container mx-auto px-4 rounded-lg">
+    <div class="h-fit bg-gray-50 dark:bg-gray-900 pb-20">
+          <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Accounts</h1>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Manage your Accounts
+                </p>
+            </div>
+
             <div v-if="loading" class="flex justify-center items-center py-8">
                 <div role="status">
                     <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +67,6 @@
         </footer>
     </div>
 
-    <!-- add accounts modal -->
     <AccountModal :show="showModal" :id="account_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" />
 </template>
 
@@ -104,7 +111,7 @@ function close_modal() {
 }
 
 function handle_decline() {
-    showModal.value = false;
+    close_modal();
 }
 
 function handle_accept() {

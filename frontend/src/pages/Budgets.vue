@@ -1,7 +1,16 @@
 <template>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20" :class="{ 'blur-sm': showModal }">
-        <div class="container mx-auto px-4 rounded-lg">
-            <div v-if="loading" class="flex justify-center items-center py-8">
+    <div class="h-fit bg-gray-50 dark:bg-gray-900 pb-20">
+        <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Manage and track your budgets
+                </p>
+            </div>
+
+            <!-- Loading State -->
+            <div v-if="loading" class="flex justify-center items-center h-64">
                 <div role="status">
                     <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C0 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -11,60 +20,98 @@
                 </div>
             </div>
 
-            <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mx-4 my-4">
-                <strong>Error:</strong> {{ error }}
-            </div>
-
-            <div v-else class="relative overflow-x-auto overflow-y-auto">
-                <div v-if="budgets_data.length === 0" class="place-items-center pt-6 pb-6">
-                    <div>
-                        <span class="px-6 py-4 text-center text-gray-500"> No budgets found </span>
+            <!-- Error State -->
+            <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Error</h3>
+                        <p class="mt-1 text-sm text-red-700">{{ error }}</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-2 pt-6 pb-6 md:grid-cols-3 gap-4">
-                    <div v-for="(budget, index) in budgets_data" class="h-auto max-w-full rounded-lg">
-                        <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                            <a>
-                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ budget.budget_name }}</h5>
-                            </a>
-                            <p class="font-normal text-gray-700 dark:text-gray-400">Php {{ budget.amount_to_budget }}</p>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ budget.cutoff.name }}</p>
-                            <button 
-                                @click="edit_budget(budget.id)" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                type="button" 
-                            >
-                                Edit
-                            </button>
+            <!-- Content -->
+            <div v-else class="h-full">
+                <!-- Empty State -->
+                <div v-if="budgets_data.length === 0" class="text-center py-16">
+                    <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No budgets found</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6">Get started by creating your first budget</p>
+                </div>
+
+                <!-- Budget Selection and Grid -->
+                <div v-else class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-8">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Budgets</p>
+                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ budgets_data.length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add more stats cards as needed -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Budgets</p>
+                                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ budgets_data.length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Budget Selector -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <div class="max-w-md">
+                            <label for="budget_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                Select a budget to view details
+                            </label>
+                            <select 
+                                id="budget_id"
+                                @change="show_budget($event.target.value)" 
+                                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value="" selected>Choose a budget</option>
+                                <option 
+                                    v-for="budget in budgets_data" 
+                                    :key="budget.id" 
+                                    :value="budget.id">
+                                    {{ budget.budget_name }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
-        <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-lg dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10">
-            <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-                <button 
-                    @click="create_budget" 
-                    :disabled="loading"
-                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 disabled:opacity-50">
-                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-                        Create Budget
-                    </span>
-                </button>
-            </div>
-        </footer>
     </div>
-
-    <BudgetModal :show="showModal" :id="budget_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" />
+    <BudgetModal :show="showModal" :id=budget_id @close="handle_decline()" @accept="handle_accept" @decline="handle_decline()" />
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "../lib/axios";
 import BudgetModal from "../components/BudgetModal.vue";
+
 const budgets_data = ref([]);
 const loading = ref(false);
 const error = ref(null);
@@ -76,22 +123,22 @@ onMounted(() => {
 });
 
 async function get_all_budgets() {
-    loading.value = true;
-    error.value = null;
-    
-    try {
-        const response = await axios.post('api/budgets');
-        budgets_data.value = response.data.budgets || [];
-    } catch (err) {
-        error.value = err.response?.data?.message || err.message || 'Failed to load budgets';
-    } finally {
-        loading.value = false;
-    }
+  loading.value = true;
+  error.value = null;
+  
+  try {
+    const response = await axios.post('api/budgets');
+    budgets_data.value = response.data.budgets || [];
+  } catch (err) {
+    error.value = err.response?.data?.message || err.message || 'Failed to load budgets';
+  } finally {
+    loading.value = false;
+  }
 }
 
-function create_budget() {
-    budget_id.value = null;
-    showModal.value = true;
+function show_budget(id) {
+  let budget = budgets_data.value.filter((v) => v.id == parseInt(id))[0];
+  console.log("budget", budget);
 }
 
 function close_modal() {
@@ -111,7 +158,6 @@ function handle_accept() {
 function handle_decline() {
     close_modal();
 }
-
 </script>
 
 <style lang="scss" scoped>

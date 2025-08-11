@@ -14,7 +14,10 @@ class ExpenseController extends Controller
     {
         //
         $user = $request->user();
-        $expense = Expense::where('user_id', $user->id)->get();
+        $skip = $request->get('skip');
+        $take = $skip + 30;
+
+        $expense = Expense::skip($skip)->take($take)->orderBy('expense_date', 'desc')->where('user_id', $user->id)->get();
 
         if (!$expense) {
             return response()->json([

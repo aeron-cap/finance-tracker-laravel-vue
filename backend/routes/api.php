@@ -44,7 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/account', 'store');
         Route::post('/account/{id}', 'update');
         Route::post('/account-delete/{id}', 'destroy');
-        // delete income, use Softdeletes
+
+        Route::post('/update-balance/{id}', 'update_balance');
     });
 
     Route::controller(ExpenseController::class)->group(function () {

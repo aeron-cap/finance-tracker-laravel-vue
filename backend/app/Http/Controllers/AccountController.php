@@ -14,7 +14,7 @@ class AccountController extends Controller
     {
         //
         $user = $request->user();
-        $accounts = Account::where('user_id', $user->id)->get();
+        $accounts = Account::where('user_id', $user->id)->with('status')->get();
 
         if (!$accounts) {
             return response()->json([
@@ -123,5 +123,20 @@ class AccountController extends Controller
           'message' => 'Account deleted',
         ], 200);
       }
+    }
+
+    public function update_balance(string $id, Request $request)
+    {
+        $user = $request->user();
+        $account_update = Account::where('id', $id)->where('user_id', $user->id)->first();
+        $actual_balance = $request->get('actual_balance');
+
+        if (isset($account_update)) {
+            $account_update->update(['actual_balance' => $actual_balance]);
+        }
+
+        return response()->json([
+            'message' => 'Actual Balance updated'
+        ], 200);
     }
 }

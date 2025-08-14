@@ -99,6 +99,63 @@
                                 </option>
                             </select>
                         </div>
+                        <div v-if="showBudget">
+                          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                  <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                                      {{ selected_budget.budget_name }}
+                                      <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">{{ selected_budget.amount_to_budget }} - {{ selected_budget.cutoff.name }}</p>
+                                  </caption>
+                                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                      <tr>
+                                          <th scope="col" class="px-6 py-3 text-center">
+                                              Type
+                                          </th>
+                                          <th scope="col" class="px-6 py-3 text-center">
+                                              Amount
+                                          </th>
+                                          <th scope="col" class="px-6 py-3 text-center">
+                                              Description
+                                          </th>
+                                          <th scope="col" class="px-6 py-3 text-center">
+                                              Is Used
+                                          </th>
+                                          <th scope="col" class="px-6 py-3 text-center">
+                                              Action
+                                          </th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr v-for=" (budget, i) in selected_budget.budget_details"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                          <th scope="row" class=" text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                              {{ budget.budget_type_name }}
+                                          </th>
+                                          <td class="text-center px-6 py-4">
+                                              {{ budget.amount }}
+                                          </td>
+                                          <td class="text-center px-6 py-4">
+                                              {{ budget.description }}
+                                          </td>
+                                          <td class="text-center px-6 py-4">
+                                            <input 
+                                              type="checkbox" 
+                                              v-model="budget.is_used" 
+                                              :true-value="1" 
+                                              :false-value="0" 
+                                              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded 
+                                                    focus:ring-blue-500 dark:focus:ring-blue-600 
+                                                    dark:ring-offset-gray-800 focus:ring-2 
+                                                    dark:bg-gray-700 dark:border-gray-600"
+                                            />
+                                          </td>
+                                          <td class="px-6 py-4 text-center">
+                                              <a @click="edit_budget(selected_budget.id)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,6 +174,8 @@ const loading = ref(false);
 const error = ref(null);
 const showModal = ref(false);
 const budget_id = ref(null);
+const showBudget = ref(false);
+const selected_budget = ref([]);
 
 onMounted(() => {
     get_all_budgets();
@@ -138,7 +197,12 @@ async function get_all_budgets() {
 
 function show_budget(id) {
   let budget = budgets_data.value.filter((v) => v.id == parseInt(id))[0];
-  console.log("budget", budget);
+  if (budget['id'] !== undefined) {
+    showBudget.value = true;
+    selected_budget.value = budget;
+  } else {
+    showBudget.value = false;
+  }
 }
 
 function close_modal() {

@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/budget', 'store');
         Route::post('/budget/{id}', 'update');
         Route::post('/budget-delete/{id}', 'destroy');
+
+        Route::post('/budget_detail-is_used/{id}', 'update_is_used');
+        Route::post('/budget_detail-is_default/{id}', 'update_is_default');
     });
 
     Route::controller(IncomeController::class)->group(function () {

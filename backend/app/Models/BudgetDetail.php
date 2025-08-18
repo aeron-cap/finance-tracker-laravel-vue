@@ -8,5 +8,9 @@ class BudgetDetail extends Model
 {
     //
     protected $guarded = [];
-    
+
+    public function budget() {
+        return $this->hasOne(Budget::class, 'id', 'budget_id');
+    }
+
 }

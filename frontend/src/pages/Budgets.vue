@@ -99,63 +99,122 @@
                                 </option>
                             </select>
                         </div>
-                        <div v-if="showBudget">
-                          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                  <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                                      {{ selected_budget.budget_name }}
-                                      <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">{{ selected_budget.amount_to_budget }} - {{ selected_budget.cutoff.name }}</p>
-                                  </caption>
-                                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                      <tr>
-                                          <th scope="col" class="px-6 py-3 text-center">
-                                              Type
-                                          </th>
-                                          <th scope="col" class="px-6 py-3 text-center">
-                                              Amount
-                                          </th>
-                                          <th scope="col" class="px-6 py-3 text-center">
-                                              Description
-                                          </th>
-                                          <th scope="col" class="px-6 py-3 text-center">
-                                              Is Used
-                                          </th>
-                                          <th scope="col" class="px-6 py-3 text-center">
-                                              Action
-                                          </th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr v-for=" (budget, i) in selected_budget.budget_details"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                          <th scope="row" class=" text-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                              {{ budget.budget_type_name }}
-                                          </th>
-                                          <td class="text-center px-6 py-4">
-                                              {{ budget.amount }}
-                                          </td>
-                                          <td class="text-center px-6 py-4">
-                                              {{ budget.description }}
-                                          </td>
-                                          <td class="text-center px-6 py-4">
-                                            <input 
-                                              type="checkbox" 
-                                              v-model="budget.is_used" 
-                                              :true-value="1" 
-                                              :false-value="0" 
-                                              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded 
-                                                    focus:ring-blue-500 dark:focus:ring-blue-600 
-                                                    dark:ring-offset-gray-800 focus:ring-2 
-                                                    dark:bg-gray-700 dark:border-gray-600"
-                                            />
-                                          </td>
-                                          <td class="px-6 py-4 text-center">
-                                              <a @click="edit_budget(selected_budget.id)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                                          </td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
+                      <div v-if="showBudget">
+                        <div class="relative overflow-x-auto shadow-lg sm:rounded-xl">
+                          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <caption class="p-6 text-xl font-bold text-gray-900 dark:text-white dark:from-gray-800 dark:to-gray-750 border-b border-gray-200 dark:border-gray-700">
+                              <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                  <span class="block text-gray-900 dark:text-white">{{ selected_budget.budget_name }}</span>
+                                  <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ selected_budget.amount_to_budget }} - {{ selected_budget.cutoff.name }}
+                                  </p>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                  <a 
+                                    @click="edit_budget(selected_budget.id)" 
+                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition-colors duration-200 cursor-pointer"
+                                  >
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                    Edit
+                                  </a>
+                                  <div class="flex items-center space-x-2">
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Default</label>
+                                    <input 
+                                      type="radio" 
+                                      :checked="selected_budget.is_default === 1"
+                                      :value="1"
+                                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded 
+                                              focus:ring-blue-500 dark:focus:ring-blue-600 
+                                              dark:ring-offset-gray-800 focus:ring-2 
+                                              dark:bg-gray-700 dark:border-gray-600 transition-all duration-200"
+                                      @change="make_default(selected_budget.id)"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </caption>
+                            <thead class="text-xs text-gray-700 uppercase dark:from-gray-700 dark:to-gray-650 dark:text-gray-300">
+                              <tr>
+                                <th scope="col" class="px-6 py-4 text-center font-bold tracking-wide">
+                                  <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Type</span>
+                                  </div>
+                                </th>
+                                <th scope="col" class="px-6 py-4 text-center font-bold tracking-wide">
+                                  <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
+                                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Amount</span>
+                                  </div>
+                                </th>
+                                <th scope="col" class="px-6 py-4 text-center font-bold tracking-wide">
+                                  <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Description</span>
+                                  </div>
+                                </th>
+                                <th scope="col" class="px-6 py-4 text-center font-bold tracking-wide">
+                                  <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Is Used</span>
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr v-for="(budget, i) in selected_budget.budget_details" :key="i" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                                <th scope="row" class="text-center px-6 py-5 font-semibold text-gray-900 dark:text-white">
+                                  <div class="flex items-center justify-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                      {{ budget.budget_type_name }}
+                                    </span>
+                                  </div>
+                                </th>
+                                <td class="text-center px-6 py-5">
+                                  <span class="font-semibold text-green-600 dark:text-green-400 text-lg">
+                                    {{ budget.amount }}
+                                  </span>
+                                </td>
+                                <td class="text-center px-6 py-5">
+                                  <span class="text-gray-700 dark:text-gray-300 font-medium">
+                                    {{ budget.description }}
+                                  </span>
+                                </td>
+                                <td class="text-center px-6 py-5">
+                                  <div class="flex items-center justify-center">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                      <input 
+                                        type="checkbox" 
+                                        v-model="budget.is_used" 
+                                        :true-value="1" 
+                                        :false-value="0" 
+                                        class="sr-only peer"
+                                        @change="update_is_used(budget.id, budget)"
+                                      />
+                                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    </label>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -188,6 +247,14 @@ async function get_all_budgets() {
   try {
     const response = await axios.post('api/budgets');
     budgets_data.value = response.data.budgets || [];
+
+    for ( let x in budgets_data.value ) {
+      let budgets = budgets_data.value[x];
+
+      if (budgets.is_default == 1) {
+        show_budget(budgets.id);
+      }
+    }
   } catch (err) {
     error.value = err.response?.data?.message || err.message || 'Failed to load budgets';
   } finally {
@@ -203,6 +270,22 @@ function show_budget(id) {
   } else {
     showBudget.value = false;
   }
+}
+
+function update_is_used(id, budget_detail) {
+  try {
+    axios.post(`/api/budget_detail-is_used/${id}`, {
+      'is_used': budget_detail.is_used
+    }).then((response) => {});
+  } catch (err) {}
+}
+
+function make_default(id) {
+  try {
+    axios.post(`/api/budget_detail-is_default/${id}`).then((response) => {
+      get_all_budgets();
+    });
+  } catch (err) {}
 }
 
 function close_modal() {

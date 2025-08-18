@@ -165,4 +165,35 @@ class BudgetController extends Controller
         }
 
     }
+
+    public function update_is_used(string $id, Request $request) {
+        $user = $request->user();
+
+        $is_used = $request->get('is_used');
+
+        $budget_detail = BudgetDetail::where('id', $id)->whereHas('budget', function ($q) use ($user) {
+            $q->where('status_id', '!=', 3)->where('user_id', $user->id);
+        })->first();
+
+        if ($budget_detail) {
+            $budget_detail->update(['is_used' => isset($is_used) ? $is_used : $budget_detail['is_used']]);
+
+            return response()->json([
+                'message' => 'Detail updated'
+            ], 200);
+        }
+    }
+
+    public function update_is_default(string $id, Request $request) {
+        $user = $request->user();
+
+        Budget::where('id', $id)->where('user_id', $user->id)->update(['is_default' => 1]);
+        Budget::whereNot('id', $id)->where('user_id', $user->id)->update(['is_default' => 0]);
+
+        return response()->json([
+            'message' => 'Budgets updated'
+        ], 200);
+    }
+
+
 }

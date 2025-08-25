@@ -102,6 +102,17 @@
           </button>
         </div>
 
+        <div v-else-if="$route.name === 'Investments'" class="flex gap-2">
+          <button 
+            @click="create($route.name)" 
+            :disabled="loading"
+            class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-yellow-400 to-yellow-600 group-hover:from-yellow-400 group-hover:to-yellow-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-yellow-200 dark:focus:ring-yellow-800 disabled:opacity-50">
+            <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+                Add Investment/Goal
+            </span>
+          </button>
+        </div>
+
         <!-- Dashboard (Home) page footer - Multiple actions -->
         <!-- <div v-else-if="$route.name === 'Home'" class="flex gap-2 flex-wrap">
           <button 
@@ -154,10 +165,10 @@ const route = useRoute();
 const navigation = [
   { name: 'Dashboard', to: {name: 'Home'}},
   { name: 'Budgets', to: {name: 'Budgets'}},
-  // { name: 'Investments', to: {name: 'Investments'}},
   { name: 'Incomes', to: {name: 'Incomes'}},
   { name: 'Expenses', to: {name: 'Expenses'}},
   { name: 'Accounts', to: {name: 'Accounts'}},
+  { name: 'Investments', to: {name: 'Investments'}},
 ];
 
 const currentPageTitle = computed(() => {
@@ -170,6 +181,7 @@ const showBudgetModal = ref(false);
 const showIncomeModal = ref(false);
 const showExpenseModal = ref(false);
 const showAccountModal = ref(false);
+const showInvestmentModal = ref(false);
 
 const create = (name) => {
   switch (name) {
@@ -184,6 +196,9 @@ const create = (name) => {
       break;
     case "Accounts":
       showAccountModal.value = true;
+      break;
+    case "Investments":
+      showInvestmentModal.value = true;
       break;
     default:
       break;
@@ -203,6 +218,9 @@ const close = (name) => {
       break;
     case "Accounts":
       showAccountModal.value = false;
+      break;
+    case "Investments":
+      showInvestmentModal.value = false;
       break;
     default:
       break;

@@ -29,118 +29,159 @@
                         <span class="px-6 py-4 text-center text-gray-500"> No accounts found </span>
                     </div>
                 </div>
-                <div class="grid pt-6 pb-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div v-for="(account, index) in accounts_data" :key="account.id" class="w-full">
-                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-                      
-                      <div class="px-6 pt-6 pb-4 border-b border-gray-100 dark:border-gray-700">
-                        <div class="flex items-start justify-between">
-                          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 leading-tight">
-                            {{ account.name }}
-                          </h3>
-                          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                            {{ account.status.name }}
-                          </span>
+                <div v-else>
+                  <div class="grid pt-6 pb-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="(account, index) in accounts_data" :key="account.id" class="w-full">
+                      <div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+                        
+                        <div class="px-6 pt-6 pb-4 border-b border-gray-100 dark:border-gray-700">
+                          <div class="flex items-start justify-between">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 leading-tight">
+                              {{ account.name }}
+                            </h3>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                              {{ account.status.name }}
+                            </span>
+                          </div>
+                          <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                            {{ account.description }}
+                          </p>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                          {{ account.description }}
-                        </p>
-                      </div>
 
-                      <div class="px-6 py-4">
-                        <div class="grid grid-cols-2 gap-4">
-                          <div class="text-center">
-                            <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                              Expected
+                        <div class="px-6 py-4">
+                          <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                                Expected
+                              </div>
+                              <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+                                P{{ account.expected_balance }}
+                              </div>
                             </div>
-                            <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">
-                              P{{ account.expected_balance }}
+                            
+                            <div class="text-center">
+                              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                                Actual
+                              </div>
+                              <div class="relative">
+                                <input 
+                                  type="text" 
+                                  :value="account.actual_balance ? parseFloat(account.actual_balance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : ''"
+                                  @input="account.actual_balance = parseFloat($event.target.value.replace(/,/g, '')) || 0"
+                                  @blur="$event.target.value = parseFloat($event.target.value.replace(/,/g, '') || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"
+                                  class="w-full text-center text-lg font-bold border-0 bg-transparent text-green-600 dark:text-green-400 focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-700 rounded-md py-1 transition-all"
+                                  placeholder="0.00"
+                                />
+                              </div>
                             </div>
                           </div>
                           
-                          <div class="text-center">
-                            <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
-                              Actual
-                            </div>
-                            <div class="relative">
-                              <input 
-                                type="text" 
-                                :value="account.actual_balance ? parseFloat(account.actual_balance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : ''"
-                                @input="account.actual_balance = parseFloat($event.target.value.replace(/,/g, '')) || 0"
-                                @blur="$event.target.value = parseFloat($event.target.value.replace(/,/g, '') || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"
-                                class="w-full text-center text-lg font-bold border-0 bg-transparent text-green-600 dark:text-green-400 focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-700 rounded-md py-1 transition-all"
-                                placeholder="0.00"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-                          <div class="flex items-center justify-center" v-if="account.expected_balance && account.actual_balance">
-                            <span 
-                              :class="{
-                                'text-green-600 dark:text-green-400': parseFloat(account.actual_balance) >= parseFloat(account.expected_balance),
-                                'text-red-600 dark:text-red-400': parseFloat(account.actual_balance) < parseFloat(account.expected_balance)
-                              }"
-                              class="text-sm font-medium flex items-center"
-                            >
-                              <svg v-if="parseFloat(account.actual_balance) >= parseFloat(account.expected_balance)" class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                              </svg>
-                              <svg v-else class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                              </svg>
-                              {{ parseFloat(account.actual_balance) >= parseFloat(account.expected_balance) ? 'On Track' : 'Below Target' }}
-                              <span class="ml-1">
-                                (${{ Math.abs(parseFloat(account.actual_balance || 0) - parseFloat(account.expected_balance || 0)).toFixed(2) }})
+                          <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                            <div class="flex items-center justify-center" v-if="account.expected_balance && account.actual_balance">
+                              <span 
+                                :class="{
+                                  'text-green-600 dark:text-green-400': parseFloat(account.actual_balance) >= parseFloat(account.expected_balance),
+                                  'text-red-600 dark:text-red-400': parseFloat(account.actual_balance) < parseFloat(account.expected_balance)
+                                }"
+                                class="text-sm font-medium flex items-center"
+                              >
+                                <svg v-if="parseFloat(account.actual_balance) >= parseFloat(account.expected_balance)" class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <svg v-else class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ parseFloat(account.actual_balance) >= parseFloat(account.expected_balance) ? 'On Track' : 'Below Target' }}
+                                <span class="ml-1">
+                                  (${{ Math.abs(parseFloat(account.actual_balance || 0) - parseFloat(account.expected_balance || 0)).toFixed(2) }})
+                                </span>
                               </span>
-                            </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div class="px-6 py-4">
-                        <div class="flex space-x-3">
-                          <button
-                            @click="edit_account(account.id)"
-                            class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors"
-                            type="button"
-                          >
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Edit
-                          </button>
-                          <button
-                            @click="edit_actual_balance(account.id, account.actual_balance)"
-                            class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-colors"
-                            type="button"
-                          >
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Save
-                          </button>
+                        <div class="px-6 py-4">
+                          <div class="flex space-x-3">
+                            <button
+                              @click="edit_account(account.id)"
+                              class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors"
+                              type="button"
+                            >
+                              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                              </svg>
+                              Edit
+                            </button>
+                            <button
+                              @click="edit_actual_balance(account.id, account.actual_balance)"
+                              class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-colors"
+                              type="button"
+                            >
+                              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                              </svg>
+                              Save
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                  <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                    <div class="max-w-md">
+                        <label for="account_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                            Select an account to view details
+                        </label>
+                        <select 
+                            id="account_id"
+                            @change="show_breakdown($event.target.value)" 
+                            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="" selected>Choose account to see breakdown</option>
+                            <option 
+                                v-for="account in accounts_data" 
+                                :key="account.id" 
+                                :value="account.id">
+                                {{ account.name }}
+                            </option>
+                        </select>
+                    </div>
+                  </caption>
+
+                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr>
+                          <th scope="col" class="px-6 py-3">
+                              Type
+                          </th>
+                          <th scope="col" class="px-6 py-3">
+                              Current Balance
+                          </th>
+                          <th scope="col" class="px-6 py-3">
+                              As of
+                          </th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                              Apple MacBook Pro 17"
+                          </th>
+                          <td class="px-6 py-4">
+                              Silver
+                          </td>
+                          <td class="px-6 py-4">
+                              Laptop
+                          </td>
+                      </tr>
+                  </tbody>
+                </table>
+                </div>
+
             </div>
         </div>
-
-        <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-lg dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10">
-            <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-                <button 
-                    @click="create_account" 
-                    :disabled="loading"
-                    class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 disabled:opacity-50">
-                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-                        Create Account
-                    </span>
-                </button>
-            </div>
-        </footer>
     </div>
 
     <AccountModal :show="showModal" :id="account_id" @close="close_modal" @accept="handle_accept" @decline="handle_decline" />

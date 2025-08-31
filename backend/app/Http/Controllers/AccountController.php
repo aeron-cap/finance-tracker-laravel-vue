@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Expense;
+use App\Models\Income;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -138,5 +140,14 @@ class AccountController extends Controller
         return response()->json([
             'message' => 'Actual Balance updated'
         ], 200);
+    }
+
+    public function show_breakdown(string $id, Request $request)
+    {
+        $user = $request->user();
+        $expenses = Expense::where('user_id', $user->id)->where('account_id', $id)->sum('amount');
+        $incomes = Income::where('user_id', $user->id)->where('account_id', $id)->sum('amount');
+
+        return $expenses;
     }
 }

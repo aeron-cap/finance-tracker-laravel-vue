@@ -136,7 +136,7 @@
                         <label for="account_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                             Select an account to view details
                         </label>
-                        <select 
+                        <select  
                             id="account_id"
                             @change="show_breakdown($event.target.value)" 
                             class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -191,6 +191,7 @@
 import { onMounted, ref } from 'vue';
 import axios from '../lib/axios';
 import AccountModal from '../components/AccountModal.vue';
+import Multiselect from 'vue-multiselect';
 
 const accounts_data = ref([]);
 const loading = ref(false);
@@ -249,6 +250,13 @@ function edit_actual_balance(id, balance){
       get_all_accounts();
     })
     }catch (error) {}
+}
+
+function show_breakdown(id) {
+  try {
+    axios.post(`api/show-account-breakdown/${id}`).then((response) => {
+    })
+  }catch (error) {}
 }
 
 </script>

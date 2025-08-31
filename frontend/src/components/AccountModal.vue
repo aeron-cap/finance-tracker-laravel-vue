@@ -61,6 +61,26 @@
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     placeholder="Describe this account detail..."></textarea>
                             </div>
+
+                            <div class="mt-4">
+                                <label for="status-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Status</label>
+                                <select 
+                                    id="status-select" 
+                                    v-model="account_data.breakdown"
+                                    :items="budget_types"
+                                    @change="add_breakdown"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    required
+                                    >
+                                    <option value="" disabled>Choose a budget type for breakdown</option>
+                                    <option 
+                                        v-for="type in budget_types" 
+                                        :key="type.id" 
+                                        :value="type.id">
+                                        {{ type.name }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -69,7 +89,8 @@
                         @click="accept_action" 
                         type="button" 
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Create Account
+                        <span v-if="props.id !== null"> Update Account </span>
+                        <span v-if="props.id == null"> Create Account </span>
                     </button>
                     <button 
                         @click="decline_action" 
@@ -97,6 +118,7 @@ import axios from '../lib/axios';
 onMounted(() => {
     // entities to load
     get_statuses();
+    get_budget_types();
 });
 
 const props = defineProps({
@@ -116,10 +138,12 @@ const account_data = ref({
     name: '',
     description: '',
     status_id: null,
-    status_name: ''
+    status_name: '',
+    breakdown: {},
 });
 
 const statuses = ref([]);
+const budget_types = ref([]);
 const loading =ref(false);
 
 watch(() => props.show, (newValue) => {
@@ -128,6 +152,7 @@ watch(() => props.show, (newValue) => {
         account_data.value.description = '';
         account_data.value.status_id = null;
         account_data.value.status_name = '';
+        account_data.value.breakdown = {};
     }
 
     // if props.id, get the data
@@ -182,7 +207,6 @@ function accept_action() {
   if (props.id > 0) {
     try {
       axios.post(`api/account/${props.id}`, account_data.value).then((response) => {
-        console.log(response);
 
         emit('accept', {
           ...account_data.value
@@ -192,7 +216,6 @@ function accept_action() {
   } else {
     try {
       axios.post("api/account", account_data.value).then((response) => {
-        console.log(response);
     
         emit('accept', {
           ...account_data.value
@@ -206,6 +229,13 @@ async function get_statuses() {
   try {
     const response = await axios.get('api/statuses');
     statuses.value = response.data.status || [];
+  }catch (error) {}
+}
+
+async function get_budget_types() {
+  try {
+    const response = await axios.post('api/budget_types');
+    budget_types.value = response.data.budget_types || [];
   }catch (error) {}
 }
 

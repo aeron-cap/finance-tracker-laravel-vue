@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/account-delete/{id}', 'destroy');
 
         Route::post('/update-balance/{id}', 'update_balance');
+        Route::post('/show-account-breakdown/{id}', 'show_breakdown');
     });
 
     Route::controller(ExpenseController::class)->group(function () {

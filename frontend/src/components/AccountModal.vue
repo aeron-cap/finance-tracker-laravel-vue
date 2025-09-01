@@ -63,23 +63,12 @@
                             </div>
 
                             <div class="mt-4">
-                                <label for="status-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Status</label>
-                                <select 
-                                    id="status-select" 
-                                    v-model="account_data.breakdown"
-                                    :items="budget_types"
-                                    @change="add_breakdown"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required
-                                    >
-                                    <option value="" disabled>Choose a budget type for breakdown</option>
-                                    <option 
-                                        v-for="type in budget_types" 
-                                        :key="type.id" 
-                                        :value="type.id">
-                                        {{ type.name }}
-                                    </option>
-                                </select>
+                                <Chips
+                                  :items="budget_types"
+                                  v-model="selected_breakdowns"
+                                  label="Select Breakdown"
+                                  @change="handle_breakdown_change"
+                                />
                             </div>
                         </div>
                     </form>
@@ -114,6 +103,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import axios from '../lib/axios';
+import Chips from './Chips.vue';
 
 onMounted(() => {
     // entities to load
@@ -139,12 +129,13 @@ const account_data = ref({
     description: '',
     status_id: null,
     status_name: '',
-    breakdown: {},
+    breakdown: [],
 });
 
 const statuses = ref([]);
 const budget_types = ref([]);
-const loading =ref(false);
+const loading = ref(false);
+const selected_breakdowns = ref([]);
 
 watch(() => props.show, (newValue) => {
     if (!newValue || props.id == null) {
@@ -152,7 +143,7 @@ watch(() => props.show, (newValue) => {
         account_data.value.description = '';
         account_data.value.status_id = null;
         account_data.value.status_name = '';
-        account_data.value.breakdown = {};
+        account_data.value.breakdown = [];
     }
 
     // if props.id, get the data
@@ -182,6 +173,10 @@ function set_account_data(data) {
   account_data.value.description = data.description;
   account_data.value.status_id = data.status_id;
   account_data.value.status_name = data.status.name;
+}
+
+function handle_breakdown_change(selected_items) {
+  console.log(selected_breakdowns);
 }
 
 function decline_action() {
@@ -240,7 +235,7 @@ async function get_budget_types() {
 }
 
 function close_modal() {
-    emit('close');
+  emit('close');
 }
 
 </script>

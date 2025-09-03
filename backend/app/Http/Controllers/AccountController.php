@@ -147,24 +147,57 @@ class AccountController extends Controller
 
     public function show_breakdown(string $id, Request $request)
     {
-        $breakdown_summary = [];
-
         $user = $request->user();
 
-        $account = Account::where('id', $id)->where('user_id', $user->id)->first();
+        $account = Account::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$account) {
+            return response()->json([
+                'message' => 'Account not found'
+            ], 404);
+        }
+
         $breakdown = $account->breakdown ? json_decode($account->breakdown) : null;
 
-        if (isset($breakdown)) {
-            foreach ($breakdown as $type) {
-                $expenses = Expense::where('user_id', $user->id)->where('account_id', $id)->where('budget_type_name', $type)->sum('amount');
-                $incomes = Income::where('user_id', $user->id)->where('account_id', $id)->where('budget_type_name', $type)->sum('amount');
+        if (!$breakdown) {
+            return response()->json([
+                'message' => 'No breakdown data available',
+                'breakdown_summary' => []
+            ], 200);
+        }
 
-                $breakdown_summary[$type] = array(
-                    'amount' => $incomes - $expenses,
-                );
-            };
-        };
+        $expenses = Expense::where('user_id', $user->id)
+            ->where('account_id', $id)
+            ->whereIn('budget_type_name', $breakdown)
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount')
+            ->groupBy('budget_type_name')
+            ->pluck('total_amount', 'budget_type_name');
 
-        return $breakdown_summary;
+        $incomes = Income::where('user_id', $user->id)
+            ->where('account_id', $id)
+            ->whereIn('budget_type_name', $breakdown)
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount')
+            ->groupBy('budget_type_name')
+            ->pluck('total_amount', 'budget_type_name');
+
+        $breakdown_summary = [];
+        foreach ($breakdown as $type) {
+            $expense_total = $expenses->get($type, 0);
+            $income_total = $incomes->get($type, 0);
+
+            $breakdown_summary[$type] = [
+                'amount' => $income_total - $expense_total,
+                'income' => $income_total,
+                'expense' => $expense_total,
+            ];
+        }
+
+        return response()->json([
+            'account_id' => $account->id,
+            'account_name' => $account->name,
+            'breakdown_summary' => $breakdown_summary
+        ], 200);
     }
 }

@@ -44,7 +44,9 @@ class AccountController extends Controller
             'status_id' => 'required',
         ]);
 
-        $a = auto_create(Account::class, $account, ['user_id' => $user->id]);
+        $breakdown = null !== $request->get('breakdown') ? $request->get('breakdown') : null;
+
+        $a = auto_create(Account::class, $account, ['user_id' => $user->id, 'breakdown' => $breakdown]);
 
         if ($a->save()) {
             return response()->json([
@@ -90,6 +92,7 @@ class AccountController extends Controller
             'name' => 'required',
             'description' => 'required',
             'status_id' => 'required',
+            'breakdown' => 'nullable|string',
         ]);
 
         $existing_a = Account::where('id', $id)->first();
@@ -144,10 +147,24 @@ class AccountController extends Controller
 
     public function show_breakdown(string $id, Request $request)
     {
-        $user = $request->user();
-        $expenses = Expense::where('user_id', $user->id)->where('account_id', $id)->sum('amount');
-        $incomes = Income::where('user_id', $user->id)->where('account_id', $id)->sum('amount');
+        $breakdown_summary = [];
 
-        return $expenses;
+        $user = $request->user();
+
+        $account = Account::where('id', $id)->where('user_id', $user->id)->first();
+        $breakdown = $account->breakdown ? json_decode($account->breakdown) : null;
+
+        if (isset($breakdown)) {
+            foreach ($breakdown as $type) {
+                $expenses = Expense::where('user_id', $user->id)->where('account_id', $id)->where('budget_type_name', $type)->sum('amount');
+                $incomes = Income::where('user_id', $user->id)->where('account_id', $id)->where('budget_type_name', $type)->sum('amount');
+
+                $breakdown_summary[$type] = array(
+                    'amount' => $incomes - $expenses,
+                );
+            };
+        };
+
+        return $breakdown_summary;
     }
 }

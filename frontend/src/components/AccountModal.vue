@@ -65,7 +65,7 @@
                             <div class="mt-4">
                                 <Chips
                                   :items="budget_types"
-                                  v-model="selected_breakdowns"
+                                  v-model="selected_breakdowns[account_data.name]"
                                   label="Select Breakdown"
                                   @change="handle_breakdown_change"
                                 />
@@ -129,13 +129,14 @@ const account_data = ref({
     description: '',
     status_id: null,
     status_name: '',
-    breakdown: [],
+    breakdown: '',
 });
 
 const statuses = ref([]);
 const budget_types = ref([]);
 const loading = ref(false);
 const selected_breakdowns = ref([]);
+const breakdown_to_save = ref([]);
 
 watch(() => props.show, (newValue) => {
     if (!newValue || props.id == null) {
@@ -143,7 +144,7 @@ watch(() => props.show, (newValue) => {
         account_data.value.description = '';
         account_data.value.status_id = null;
         account_data.value.status_name = '';
-        account_data.value.breakdown = [];
+        account_data.value.breakdown = '';
     }
 
     // if props.id, get the data
@@ -173,10 +174,12 @@ function set_account_data(data) {
   account_data.value.description = data.description;
   account_data.value.status_id = data.status_id;
   account_data.value.status_name = data.status.name;
+
+  build_breakdown_data(data.breakdown, "view");
 }
 
 function handle_breakdown_change(selected_items) {
-  console.log(selected_breakdowns);
+  breakdown_to_save.value[account_data.value.name] = selected_breakdowns.value[account_data.value.name];
 }
 
 function decline_action() {
@@ -193,10 +196,41 @@ function delete_account() {
   }
 }
 
+function build_breakdown_data(types, transaction) {
+  if (transaction == "save") {
+    let type_names = [];
+    for (let i in types) {
+      let type = types[i];
+      type_names.push(type.name);
+    }
+    account_data.value.breakdown = JSON.stringify(type_names);
+    
+  } else if (transaction == "view") {
+    let breakdown_json = JSON.parse(types);
+    
+    selected_breakdowns.value[account_data.value.name] = [];
+
+    for (let j in breakdown_json) {
+      let breakdown_type = breakdown_json[j];
+      for (let i in budget_types.value) {
+        let budget_type = budget_types.value[i];
+        if (budget_type.name == breakdown_type) {
+          selected_breakdowns.value[account_data.value.name].push(budget_type);
+          break;
+        }
+      }
+    }
+  }
+}
+
 function accept_action() {
   if (!account_data.value.name || !account_data.value.description || !account_data.value.status_id) {
     alert('Please fill all the required fields');
     return;
+  }
+
+  if(breakdown_to_save.value[account_data.value.name].length > 0) {
+    build_breakdown_data(breakdown_to_save.value[account_data.value.name], "save");
   }
 
   if (props.id > 0) {

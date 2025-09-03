@@ -191,7 +191,6 @@
 import { onMounted, ref } from 'vue';
 import axios from '../lib/axios';
 import AccountModal from '../components/AccountModal.vue';
-import Multiselect from 'vue-multiselect';
 
 const accounts_data = ref([]);
 const loading = ref(false);

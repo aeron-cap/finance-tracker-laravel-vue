@@ -165,17 +165,29 @@
                       </tr>
                   </thead>
                   <tbody>
-                      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              Apple MacBook Pro 17"
-                          </th>
-                          <td class="px-6 py-4">
-                              Silver
-                          </td>
-                          <td class="px-6 py-4">
-                              Laptop
-                          </td>
-                      </tr>
+                    <tr 
+                      v-for="(type, index) in breakdown_details[account_for_breakdown]" 
+                      :key="type.budget_type_name" 
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                    >
+                      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ type.budget_type_name || index }}
+                      </th>
+                      <td class="px-6 py-4">
+                        {{ Math.abs(parseFloat(type.total || 0)).toFixed(2) }}
+                      </td>
+                      <td class="px-6 py-4">
+                        {{ type.as_of || '-' }}
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <tbody v-if="breakdown_details[account_for_breakdown].length == 0">
+                    <tr>
+                      <td colspan="3" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                        No Breakdown
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
                 </div>
@@ -197,6 +209,8 @@ const loading = ref(false);
 const error = ref(null);
 const showModal = ref(false);
 const account_id = ref(false);
+const breakdown_details = ref([]);
+const account_for_breakdown = ref(null);
 
 onMounted(() => {
     get_all_accounts();
@@ -252,8 +266,11 @@ function edit_actual_balance(id, balance){
 }
 
 function show_breakdown(id) {
+  account_for_breakdown.value = id;
+  breakdown_details.value[id] = [];
   try {
     axios.post(`api/show-account-breakdown/${id}`).then((response) => {
+      breakdown_details.value[id] = response.data.breakdown_summary;
     })
   }catch (error) {}
 }

@@ -171,33 +171,38 @@ class AccountController extends Controller
         $expenses = Expense::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, MAX(expense_date) as as_of')
             ->groupBy('budget_type_name')
-            ->pluck('total_amount', 'budget_type_name');
+            ->get()
+            ->keyBy('budget_type_name');
 
         $incomes = Income::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, MAX(income_date) as as_of')
             ->groupBy('budget_type_name')
-            ->pluck('total_amount', 'budget_type_name');
+            ->get()
+            ->keyBy('budget_type_name');
 
         $breakdown_summary = [];
         foreach ($breakdown as $type) {
-            $expense_total = $expenses->get($type, 0);
-            $income_total = $incomes->get($type, 0);
+            $expense_total = $expenses->get($type)->total_amount ?? 0;
+            $income_total = $incomes->get($type)->total_amount ?? 0;
+            $as_of = $incomes->get($type)->as_of;
 
             $breakdown_summary[$type] = [
-                'amount' => $income_total - $expense_total,
+                'total' => $income_total - $expense_total,
                 'income' => $income_total,
                 'expense' => $expense_total,
+                'as_of' => $as_of,
+                'account_id' => $id,
             ];
         }
 
         return response()->json([
             'account_id' => $account->id,
             'account_name' => $account->name,
-            'breakdown_summary' => $breakdown_summary
+            'breakdown_summary' => $breakdown_summary,
         ], 200);
     }
 }

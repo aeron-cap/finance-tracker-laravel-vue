@@ -10,21 +10,26 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleAuthController;
 
+// Route::controller(AuthController::class)->group(function () {
+//     Route::post('/register', 'register');
+//     Route::post('/login', 'login');
+// });
 
-Route::controller(AuthController::class)->group(function () {
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
+Route::controller(GoogleAuthController::class)->group(function () {
+    Route::get('/auth/google/redirect', 'redirect')->name('auth.google.redirect');
+    Route::get('/auth/google/callback', 'callback')->name('auth.google.callback');
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     Route::controller(BudgetController::class)->group(function () {
         Route::get('/budget/{id}', 'show');
-        Route::post('/budgets', 'index');
+        Route::get('/budgets', 'index');
         Route::post('/budget', 'store');
         Route::post('/budget/{id}', 'update');
         Route::post('/budget-delete/{id}', 'destroy');
@@ -35,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(IncomeController::class)->group(function () {
         Route::get('/income/{id}', 'show');
-        Route::post('/incomes', 'index');
+        Route::get('/incomes', 'index');
         Route::post('/income', 'store');
         Route::post('/income/{id}', 'update');
         Route::post('/income-delete/{id}', 'destroy');
@@ -43,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(AccountController::class)->group(function () {
         Route::get('/account/{id}', 'show');
-        Route::post('/accounts', 'index');
+        Route::get('/accounts', 'index');
         Route::post('/account', 'store');
         Route::post('/account/{id}', 'update');
         Route::post('/account-delete/{id}', 'destroy');
@@ -54,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(ExpenseController::class)->group(function () {
         Route::get('/expense/{id}', 'show');
-        Route::post('/expenses', 'index');
+        Route::get('/expenses', 'index');
         Route::post('/expense', 'store');
         Route::post('/expense/{id}', 'update');
         Route::post('/expense-delete/{id}', 'destroy');
@@ -69,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(BudgetTypeController::class)->group(function () {
-        Route::post('/budget_types', 'index');
+        Route::get('/budget_types', 'index');
     });
 
 });

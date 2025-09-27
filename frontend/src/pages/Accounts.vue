@@ -129,69 +129,69 @@
                   </div>
                 </div>
 
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                  <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                    <div class="max-w-md">
-                        <label for="account_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                            Select an account to view details
-                        </label>
-                        <select  
-                            id="account_id"
-                            @change="show_breakdown($event.target.value)" 
-                            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option value="" selected>Choose account to see breakdown</option>
-                            <option 
-                                v-for="account in accounts_data" 
-                                :key="account.id" 
-                                :value="account.id">
-                                {{ account.name }}
-                            </option>
-                        </select>
-                    </div>
-                  </caption>
+                <div v-if="accounts_data.length != 0" class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                      <div class="max-w-md">
+                          <label for="account_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                              Select an account to view details
+                          </label>
+                          <select  
+                              id="account_id"
+                              @change="show_breakdown($event.target.value)" 
+                              class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                              <option value="" selected>Choose account to see breakdown</option>
+                              <option 
+                                  v-for="account in accounts_data" 
+                                  :key="account.id" 
+                                  :value="account.id">
+                                  {{ account.name }}
+                              </option>
+                          </select>
+                      </div>
+                    </caption>
 
-                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                      <tr>
-                          <th scope="col" class="px-6 py-3">
-                              Type
-                          </th>
-                          <th scope="col" class="px-6 py-3">
-                              Current Balance
-                          </th>
-                          <th scope="col" class="px-6 py-3">
-                              As of
-                          </th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr 
-                      v-for="(type, index) in breakdown_details[account_for_breakdown]" 
-                      :key="type.budget_type_name" 
-                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
-                    >
-                      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ type.budget_type_name || index }}
-                      </th>
-                      <td class="px-6 py-4">
-                        {{ Math.abs(parseFloat(type.total || 0)).toFixed(2) }}
-                      </td>
-                      <td class="px-6 py-4">
-                        {{ type.as_of || '-' }}
-                      </td>
-                    </tr>
-                  </tbody>
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Type
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Current Balance
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                As of
+                            </th>
+                        </tr>
+                    </thead>
 
-                  <tbody v-if="breakdown_details[account_for_breakdown].length == 0">
-                    <tr>
-                      <td colspan="3" class="text-center py-4 text-gray-500 dark:text-gray-400">
-                        No Breakdown
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    <tbody v-if="account_for_breakdown && breakdown_details[account_for_breakdown] && breakdown_details[account_for_breakdown].length > 0">
+                        <tr 
+                            v-for="(type, index) in breakdown_details[account_for_breakdown]" 
+                            :key="type.budget_type_name || index" 
+                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                        >
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ type.budget_type_name || `Type ${index + 1}` }}
+                            </th>
+                            <td class="px-6 py-4">
+                                P{{ Math.abs(parseFloat(type.total || 0)).toFixed(2) }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ type.as_of || '-' }}
+                            </td>
+                        </tr>
+                    </tbody>
+
+                    <tbody v-else>
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                                {{ account_for_breakdown ? 'No Breakdown Available' : 'Select an account to view breakdown' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                  </table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -200,81 +200,89 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import axios from '../lib/axios';
-import AccountModal from '../components/AccountModal.vue';
+  import { onMounted, ref } from 'vue';
+  import axios from '../lib/axios';
+  import AccountModal from '../components/AccountModal.vue';
 
-const accounts_data = ref([]);
-const loading = ref(false);
-const error = ref(null);
-const showModal = ref(false);
-const account_id = ref(false);
-const breakdown_details = ref([]);
-const account_for_breakdown = ref(null);
+  const accounts_data = ref([]);
+  const loading = ref(false);
+  const error = ref(null);
+  const showModal = ref(false);
+  const account_id = ref(false);
+  const breakdown_details = ref({}); // Changed from [] to {}
+  const account_for_breakdown = ref(null);
 
-onMounted(() => {
-    get_all_accounts();
-});
-
-async function get_all_accounts() {
-    loading.value = true;
-    error.value = null;
-
-    try {
-        const response = await axios.post('api/accounts');
-        accounts_data.value = response.data.accounts || [];
-    } catch (err) {
-        error.value = err.response?.data?.message || err.message || 'Failed to load accounts';
-    }
-    finally{
-        loading.value = false;
-    }
-}
-
-function create_account() {
-    account_id.value = null;
-    showModal.value = true;
-}
-
-function close_modal() {
-    showModal.value = false;
-    get_all_accounts();
-}
-
-function handle_decline() {
-    close_modal();
-}
-
-function handle_accept() {
-  showModal.value = false;
-  get_all_accounts();
-}
-
-function edit_account(id) {
-  account_id.value = id;
-  showModal.value = true;
-}
-
-function edit_actual_balance(id, balance){
-  console.log(id, balance);
-
-  try {
-    axios.post(`api/update-balance/${id}`, {actual_balance: balance,}).then((response) => {
+  onMounted(() => {
       get_all_accounts();
-    })
-    }catch (error) {}
-}
+  });
 
-function show_breakdown(id) {
-  account_for_breakdown.value = id;
-  breakdown_details.value[id] = [];
-  try {
-    axios.post(`api/show-account-breakdown/${id}`).then((response) => {
-      breakdown_details.value[id] = response.data.breakdown_summary;
-    })
-  }catch (error) {}
-}
+  async function get_all_accounts() {
+      loading.value = true;
+      error.value = null;
 
+      try {
+          const response = await axios.get('api/accounts');
+          accounts_data.value = response.data.accounts || [];
+      } catch (err) {
+          error.value = err.response?.data?.message || err.message || 'Failed to load accounts';
+      } finally {
+          loading.value = false;
+      }
+  }
+
+  function create_account() {
+      account_id.value = null;
+      showModal.value = true;
+  }
+
+  function close_modal() {
+      showModal.value = false;
+      get_all_accounts();
+  }
+
+  function handle_decline() {
+      close_modal();
+  }
+
+  function handle_accept() {
+      showModal.value = false;
+      get_all_accounts();
+  }
+
+  function edit_account(id) {
+      account_id.value = id;
+      showModal.value = true;
+  }
+
+  async function edit_actual_balance(id, balance) {
+      console.log(id, balance);
+
+      try {
+          const response = await axios.post(`api/update-balance/${id}`, {
+              actual_balance: balance,
+          });
+          get_all_accounts();
+      } catch (error) {
+          console.error('Error updating balance:', error);
+      }
+  }
+
+  async function show_breakdown(id) {
+      account_for_breakdown.value = id;
+      
+      // Initialize the breakdown for this account as an empty array
+      if (!breakdown_details.value[id]) {
+          breakdown_details.value[id] = [];
+      }
+      
+      try {
+          const response = await axios.post(`api/show-account-breakdown/${id}`);
+          breakdown_details.value[id] = response.data.breakdown_summary || [];
+      } catch (error) {
+          console.error('Error fetching breakdown:', error);
+          breakdown_details.value[id] = [];
+      }
+  }
 </script>
 
 <style lang="scss" scoped>

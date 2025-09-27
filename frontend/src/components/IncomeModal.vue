@@ -239,7 +239,7 @@ function set_income_data (data) {
 
 async function get_accounts() {
   try {
-    const response = await axios.post('api/accounts');
+    const response = await axios.get('api/accounts');
     const raw = response.data.accounts || {};
     accounts.value = Array.isArray(raw) ? raw : Object.values(raw);
   }catch (error) {}
@@ -247,7 +247,7 @@ async function get_accounts() {
 
 function get_budget_types() {
   try {
-    axios.post('api/budget_types', {type: 'Income'}).then((response) => {
+    axios.get('api/budget_types', {type: 'Income'}).then((response) => {
       const raw = response.data.budget_types || {};
       income_budget_types.value = Array.isArray(raw) ? raw : Object.values(raw);
     })
@@ -256,7 +256,7 @@ function get_budget_types() {
 
 async function get_budgets() {
   try {
-    await axios.post('api/budgets').then((response) => {
+    await axios.get('api/budgets').then((response) => {
       budgets.value = response.data.budgets || [];
     })
   }catch (error) {}

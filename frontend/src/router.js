@@ -10,6 +10,7 @@ import Investments from "./pages/Investments.vue";
 import axios from "./lib/axios";
 import Incomes from "./pages/Incomes.vue";
 import Expenses from "./pages/Expenses.vue";
+import AuthCallback from "./components/AuthCallback.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -41,25 +42,30 @@ const router = createRouter({
                 {path: '/expenses', name: 'Expenses', component: Expenses}
             ]
         },
+        {
+            path: '/auth/callback',
+            name: 'AuthCallback',
+            component: AuthCallback,
+        }
     ]
 })
 
-router.beforeEach((to, from) => {
-    if (to.name === 'Login' || to.name === 'Register') {
-        return true;
+router.beforeEach(async (to, from) => {
+    if (to.name === 'Login' || to.name === 'Register' || to.name === 'AuthCallback') {
+        return true
     }
-
-    checkTokenAuthenticity();
+    
+    const token = localStorage.getItem('auth_token')
+    if (!token) {
+        return router.push({ name: 'Login' })
+    }
+    
+    try {
+        await axios.get("/api/user")
+        return true
+    } catch (error) {
+        return router.push({ name: 'Login' })
+    }
 })
 
-async function checkTokenAuthenticity () {
-    await axios.get("/api/user")
-    .then(response=> {})
-    .catch((error) => {
-        router.push({
-            name: 'Login'
-        })
-    })
-}
-
-export default router 
+export default router

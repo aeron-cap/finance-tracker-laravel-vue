@@ -245,7 +245,8 @@ async function get_all_budgets() {
   error.value = null;
   
   try {
-    const response = await axios.post('api/budgets');
+    const response = await axios.get('api/budgets');
+    // console.log("budgets", response);
     budgets_data.value = response.data.budgets || [];
 
     for ( let x in budgets_data.value ) {

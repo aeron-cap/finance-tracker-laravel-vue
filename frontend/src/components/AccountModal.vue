@@ -263,7 +263,7 @@ async function get_statuses() {
 
 async function get_budget_types() {
   try {
-    const response = await axios.post('api/budget_types');
+    const response = await axios.get('api/budget_types');
     budget_types.value = response.data.budget_types || [];
   }catch (error) {}
 }

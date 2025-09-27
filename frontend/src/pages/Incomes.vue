@@ -183,7 +183,7 @@ async function get_all_incomes() {
   loading.value = true;
 
   try {
-    const response = await axios.post('api/incomes', {skip: skip});
+    const response = await axios.get('api/incomes', {skip: skip});
     incomes_data.value.push(...response.data.income || []);
     total_data = response.data.income.length;
 
@@ -227,7 +227,7 @@ async function get_more_incomes() {
   
   skip += page_limits;
   try {
-    const response = await axios.post('api/incomes', {skip: skip});
+    const response = await axios.get('api/incomes', {skip: skip});
     if (response.data.income.length > 0) {
       incomes_data.value.push(...response.data.income || []);
       total_data += response.data.income.length;

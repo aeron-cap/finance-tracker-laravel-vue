@@ -184,7 +184,7 @@ async function get_all_expenses() {
   loading.value = true;
 
   try {
-    const response = await axios.post('api/expenses', {skip: skip});
+    const response = await axios.get('api/expenses', {skip: skip});
     expenses_data.value.push(...response.data.expense || []);
     total_data = response.data.expense.length;
 
@@ -228,7 +228,7 @@ async function get_more_expenses() {
   
   skip += page_limits;
   try {
-    const response = await axios.post('api/expenses', {skip: skip});
+    const response = await axios.get('api/expenses', {skip: skip});
     if (response.data.expense.length > 0) {
       expenses_data.value.push(...response.data.expense || []);
       total_data += response.data.expense.length;

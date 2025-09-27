@@ -346,7 +346,7 @@ async function get_cutoff_types() {
 
 async function get_budget_types() {
     try {
-        const response = await axios.post('api/budget_types');
+        const response = await axios.get('api/budget_types');
         income_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Income");
         expense_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Expense");
     } catch (error) {}

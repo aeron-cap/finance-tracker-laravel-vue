@@ -78,6 +78,11 @@
                 </RouterLink>
             </p>
         </div>
+
+        <a v-on:click="google_login()" class="btn bg-blue-100 p-3 shadow-sm border rounded-md text-blue-900">
+          Login with Google 
+        </a>
+        
     </GuestLayout>
 </template>
 
@@ -123,6 +128,11 @@ async function submit() {
     }
     loading.value = false;
 }
+
+async function google_login() {
+  window.location.href = "http://localhost:8000/api/auth/google/redirect";
+}
+
 
 </script>
 

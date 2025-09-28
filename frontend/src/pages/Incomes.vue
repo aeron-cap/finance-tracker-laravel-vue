@@ -223,29 +223,31 @@ const { reset } = useInfiniteScroll(scrollContainer, () => {
 )
 
 async function get_more_incomes() {
-  if (loading.value) return false;
-  
-  skip += page_limits;
-  try {
-    const response = await axios.get('api/incomes', {skip: skip});
-    if (response.data.income.length > 0) {
-      incomes_data.value.push(...response.data.income || []);
-      total_data += response.data.income.length;
-
-      if (response.data.income.length < page_limits) {
+  if (total_data > 0) {
+    if (loading.value) return false;
+    
+    skip += page_limits;
+    try {
+      const response = await axios.get('api/incomes', {skip: skip});
+      if (response.data.income.length > 0) {
+        incomes_data.value.push(...response.data.income || []);
+        total_data += response.data.income.length;
+        
+        if (response.data.income.length < page_limits) {
+          hasMoreData.value = false;
+        }
+        
+        return true;
+      } else {
         hasMoreData.value = false;
+        return false;
       }
-
-      return true;
-    } else {
-      hasMoreData.value = false;
+    } catch (error) {
+      error.value = error.response?.data?.message || error.message || 'Failed to load incomes'
       return false;
+    } finally {
+      loading.value = false;
     }
-  } catch (error) {
-    error.value = error.response?.data?.message || error.message || 'Failed to load incomes'
-    return false;
-  } finally {
-    loading.value = false;
   }
 }
 

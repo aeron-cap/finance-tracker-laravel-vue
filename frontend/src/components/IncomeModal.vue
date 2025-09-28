@@ -150,12 +150,6 @@
 import { onMounted, ref, watch } from 'vue';
 import axios from '../lib/axios';
 
-onMounted(() => {
-  get_accounts();
-  get_budget_types();
-  get_budgets();
-});
-
 const accounts = ref([]);
 const income_budget_types = ref([]);
 const budgets = ref([]);
@@ -189,6 +183,10 @@ const income_data = ref({
 })
 
 watch(() => props.show, (newValue) => {
+  get_accounts();
+  get_budget_types();
+  get_budgets();
+
   if (!newValue || props.id == null) {
     income_data.value.income_date = new Date().toISOString().slice(0, 10);
     income_data.value.budget_type_id = null,
@@ -204,7 +202,6 @@ watch(() => props.show, (newValue) => {
   }
 
     if (props.id > 0) {
-      get_budget_types();
       get_income_data(props.id);
   }
 })

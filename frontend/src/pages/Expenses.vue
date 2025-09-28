@@ -224,29 +224,31 @@ const { reset } = useInfiniteScroll(scrollContainer, () => {
 )
 
 async function get_more_expenses() {
-  if (loading.value) return false;
-  
-  skip += page_limits;
-  try {
-    const response = await axios.get('api/expenses', {skip: skip});
-    if (response.data.expense.length > 0) {
-      expenses_data.value.push(...response.data.expense || []);
-      total_data += response.data.expense.length;
+  if (total_data > 0) {
+    if (loading.value) return false;
+    
+    skip += page_limits;
+    try {
+      const response = await axios.get('api/expenses', {skip: skip});
+      if (response.data.expense.length > 0) {
+        expenses_data.value.push(...response.data.expense || []);
+        total_data += response.data.expense.length;
 
-      if (response.data.expense.length < page_limits) {
+        if (response.data.expense.length < page_limits) {
+          hasMoreData.value = false;
+        }
+
+        return true;
+      } else {
         hasMoreData.value = false;
+        return false;
       }
-
-      return true;
-    } else {
-      hasMoreData.value = false;
+    } catch (error) {
+      error.value = error.response?.data?.message || error.message || 'Failed to load expenses'
       return false;
+    } finally {
+      loading.value = false;
     }
-  } catch (error) {
-    error.value = error.response?.data?.message || error.message || 'Failed to load expenses'
-    return false;
-  } finally {
-    loading.value = false;
   }
 }
 

@@ -242,12 +242,6 @@
 import { onMounted, ref, watch } from 'vue';
 import axios from '../lib/axios';
 
-onMounted(() => {
-    get_statuses();
-    get_cutoff_types();
-    get_budget_types();
-});
-
 const props = defineProps({
     show: {
         type: Boolean,
@@ -279,6 +273,10 @@ const expense_budget_types = ref([]);
 const loading = ref(false);
 
 watch(() => props.show, (newValue) => {
+    get_statuses();
+    get_cutoff_types();
+    get_budget_types();
+
     if (!newValue || props.id == null) {
         budget_data.value.status_id = null;
         budget_data.value.status_name = '';
@@ -291,7 +289,6 @@ watch(() => props.show, (newValue) => {
     }
 
     if (props.id > 0) {
-        get_budget_types();
         get_budget_data(props.id);
     }
 });

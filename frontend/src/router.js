@@ -59,13 +59,8 @@ router.beforeEach(async (to, from) => {
     if (!token) {
         return router.push({ name: 'Login' })
     }
-    
-    try {
-        await axios.get("/api/user")
-        return true
-    } catch (error) {
-        return router.push({ name: 'Login' })
-    }
+
+    return true;
 })
 
 export default router

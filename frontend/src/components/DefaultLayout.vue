@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
     <!-- Navbar with proper sticky positioning -->
-    <Disclosure as="nav" class="bg-gray-800 sticky top-0 z-50 flex-shrink-0" v-slot="{ open }">
+    <Disclosure as="nav" class="bg-gray-800 sticky top-0 flex-shrink-0" v-slot="{ open }">
       <div class="mx-auto max-w-7xl px-1 sm:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
           <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -56,8 +56,8 @@
 
     <!-- Footer fixed at bottom -->
     <footer class="bg-white shadow-lg dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10 flex-shrink-0">
-      <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-        
+      <div class="w-full mx-auto max-w-screen-xl p-4 flex items-center justify-center sm:justify-start lg:justify-start">
+      
         <div v-if="$route.name === 'Budgets'" class="flex gap-2">
           <button 
             @click="create($route.name)" 
@@ -131,22 +131,21 @@
                 Quick Income
             </span>
           </button>
-        </div> -->
+        </div>
 
-        <div v-else class="flex justify-center">
+        <div v-else class="justify-start">
           <span class="text-sm text-gray-500 dark:text-gray-400">
             {{ currentPageTitle }}
           </span>
-        </div>
-        
+        </div> -->
       </div>
       
-      <!-- Modals -->
       <BudgetModal :show="showBudgetModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
       <IncomeModal :show="showIncomeModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
       <ExpenseModal :show="showExpenseModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
       <AccountModal :show="showAccountModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
     </footer>
+    
   </div>
 </template>
 

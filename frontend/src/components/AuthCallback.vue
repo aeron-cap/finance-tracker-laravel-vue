@@ -1,8 +1,19 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen">
-    <div class="text-center">
-      <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-      <p class="mt-4">Completing authentication...</p>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <div class="text-center">
+        <div class="flex justify-center mb-6">
+          <div class="animate-spin rounded-full h-12 w-12 border-2 border-gray-300 border-t-blue-500 dark:border-gray-600 dark:border-t-blue-400"></div>
+        </div>
+        
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          Completing authentication...
+        </h2>
+        
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Please wait while we sign you in
+        </p>
+      </div>
     </div>
   </div>
 </template>

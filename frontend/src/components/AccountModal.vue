@@ -105,12 +105,6 @@ import { onMounted, ref, watch } from 'vue';
 import axios from '../lib/axios';
 import Chips from './Chips.vue';
 
-onMounted(() => {
-    // entities to load
-    get_statuses();
-    get_budget_types();
-});
-
 const props = defineProps({
     show: {
         type: Boolean,
@@ -139,6 +133,8 @@ const selected_breakdowns = ref([]);
 const breakdown_to_save = ref([]);
 
 watch(() => props.show, (newValue) => {
+    get_statuses();
+    get_budget_types();
     if (!newValue || props.id == null) {
         account_data.value.name = '';
         account_data.value.description = '';

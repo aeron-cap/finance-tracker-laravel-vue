@@ -20,11 +20,11 @@ const router = createRouter({
             name: 'Login',
             component: Login,
         },
-        {
-            path: '/register',
-            name: 'Register',
-            component: Register,
-        },
+        // {
+        //     path: '/register',
+        //     name: 'Register',
+        //     component: Register,
+        // },
         {
             path: '/:pathMatch(.*)*',
             name: 'not-found',

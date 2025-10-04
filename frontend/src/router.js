@@ -7,28 +7,28 @@ import NotFound from "./pages/NotFound.vue";
 import Budgets from "./pages/Budgets.vue";
 import Accounts from "./pages/Accounts.vue";
 import Investments from "./pages/Investments.vue";
-import axios from "./lib/axios";
 import Incomes from "./pages/Incomes.vue";
 import Expenses from "./pages/Expenses.vue";
 import AuthCallback from "./components/AuthCallback.vue";
+import Landing from "./pages/Landing.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes : [
         {
-            path: '/',
-            name: 'Login',
-            component: Login,
+          path: '/',
+          name: 'Landing',
+          component: Landing,
         },
-        // {
-        //     path: '/register',
-        //     name: 'Register',
-        //     component: Register,
-        // },
         {
-            path: '/:pathMatch(.*)*',
-            name: 'not-found',
-            component: NotFound
+          path: '/login',
+          name: 'Login',
+          component: Login,
+        },
+        {
+          path: '/:pathMatch(.*)*',
+          name: 'not-found',
+          component: NotFound
         },
         {
             path: '/app',
@@ -51,13 +51,13 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-    if (to.name === 'Login' || to.name === 'Register' || to.name === 'AuthCallback') {
+    if (to.name === 'Login' || to.name === 'Landing' || to.name === 'AuthCallback') {
         return true
     }
     
     const token = localStorage.getItem('auth_token')
     if (!token) {
-        return router.push({ name: 'Login' })
+        return router.push({ name: 'Landing' })
     }
 
     return true;

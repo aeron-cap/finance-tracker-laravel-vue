@@ -171,7 +171,7 @@ class AccountController extends Controller
         $expenses = Expense::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount, MAX(expense_date) as as_of')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(expense_date), "N/A") as as_of')
             ->groupBy('budget_type_name')
             ->get()
             ->keyBy('budget_type_name');
@@ -179,7 +179,7 @@ class AccountController extends Controller
         $incomes = Income::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount, MAX(income_date) as as_of')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(income_date), "N/A") as as_of')
             ->groupBy('budget_type_name')
             ->get()
             ->keyBy('budget_type_name');
@@ -188,7 +188,7 @@ class AccountController extends Controller
         foreach ($breakdown as $type) {
             $expense_total = $expenses->get($type)->total_amount ?? 0;
             $income_total = $incomes->get($type)->total_amount ?? 0;
-            $as_of = $incomes->get($type)->as_of;
+            $as_of = isset($incomes->get($type)->as_of) ? $incomes->get($type)->as_of : "N/A";
 
             $breakdown_summary[$type] = [
                 'total' => $income_total - $expense_total,

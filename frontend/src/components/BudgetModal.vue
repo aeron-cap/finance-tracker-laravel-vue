@@ -39,13 +39,14 @@
                                         id="status-select" 
                                         v-model="budget_data.status_id"
                                         @change="update_status_name"
-                                        class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all"
+                                        class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all [&>option]:bg-slate-800 [&>option]:text-white"
                                         required>
-                                        <option value="" disabled>Choose a status</option>
+                                        <option value="" disabled class="bg-slate-800">Choose a status</option>
                                         <option 
                                             v-for="status in statuses" 
                                             :key="status.id" 
-                                            :value="status.id">
+                                            :value="status.id"
+                                            class="bg-slate-800">
                                             {{ status.name }}
                                         </option>
                                     </select>
@@ -70,13 +71,14 @@
                                         id="cutoff-type" 
                                         v-model="budget_data.cutoff_type"
                                         @change="update_cutoff_type"
-                                        class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all"
+                                        class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all [&>option]:bg-slate-800 [&>option]:text-white"
                                         required>
-                                        <option value="" disabled>Choose cutoff type</option>
+                                        <option value="" disabled class="bg-slate-800">Choose cutoff type</option>
                                         <option 
                                             v-for="type in cutoff_types" 
                                             :key="type.id" 
-                                            :value="type.id">
+                                            :value="type.id"
+                                            class="bg-slate-800">
                                             {{ type.name }}
                                         </option>
                                     </select>
@@ -150,13 +152,14 @@
                                             :id="`budget-type-${index}`"
                                             v-model="detail.budget_type_id"
                                             @change="update_budget_type(index)"
-                                            class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all"
+                                            class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all [&>option]:bg-slate-800 [&>option]:text-white"
                                             required>
-                                            <option value="" disabled>Choose budget type</option>
+                                            <option value="" disabled class="bg-slate-800">Choose budget type</option>
                                             <option 
                                                 v-for="type in income_budget_types" 
                                                 :key="type.id" 
-                                                :value="type.id">
+                                                :value="type.id"
+                                                class="bg-slate-800">
                                                 {{ type.name }}
                                             </option>
                                         </select>
@@ -168,13 +171,14 @@
                                             :id="`budget-type-${index}`"
                                             v-model="detail.budget_type_id"
                                             @change="update_budget_type(index)"
-                                            class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all"
+                                            class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all [&>option]:bg-slate-800 [&>option]:text-white"
                                             required>
-                                            <option value="" disabled>Choose budget type</option>
+                                            <option value="" disabled class="bg-slate-800">Choose budget type</option>
                                             <option 
                                                 v-for="type in expense_budget_types" 
                                                 :key="type.id" 
-                                                :value="type.id">
+                                                :value="type.id"
+                                                class="bg-slate-800">
                                                 {{ type.name }}
                                             </option>
                                         </select>
@@ -235,220 +239,220 @@
 </template>
 
 <script setup>
-  import { onMounted, ref, watch } from 'vue';
-  import axios from '../lib/axios';
+import { onMounted, ref, watch } from 'vue';
+import axios from '../lib/axios';
 
-  const props = defineProps({
-      show: {
-          type: Boolean,
-          default: false
-      },
-      id: {
-          type: Number,
-          default: null,
-      }
-  });
+const props = defineProps({
+    show: {
+        type: Boolean,
+        default: false
+    },
+    id: {
+        type: Number,
+        default: null,
+    }
+});
 
-  const emit = defineEmits(['close', 'accept', 'decline']);
+const emit = defineEmits(['close', 'accept', 'decline']);
 
-  const budget_data = ref({
-      status_id: null,
-      status_name: '',
-      budget_name: '',
-      amount_to_budget: '',
-      cutoff_type: null,
-      cutoff_type_name: '',
-      budget_date: '',
-      budget_details: [],
-  });
+const budget_data = ref({
+    status_id: null,
+    status_name: '',
+    budget_name: '',
+    amount_to_budget: '',
+    cutoff_type: null,
+    cutoff_type_name: '',
+    budget_date: '',
+    budget_details: [],
+});
 
-  const statuses = ref([]);
-  const cutoff_types = ref([]);
-  const income_budget_types = ref([]);
-  const expense_budget_types = ref([]);
-  const loading = ref(false);
+const statuses = ref([]);
+const cutoff_types = ref([]);
+const income_budget_types = ref([]);
+const expense_budget_types = ref([]);
+const loading = ref(false);
 
-  watch(() => props.show, (newValue) => {
-      get_statuses();
-      get_cutoff_types();
-      get_budget_types();
+watch(() => props.show, (newValue) => {
+    get_statuses();
+    get_cutoff_types();
+    get_budget_types();
 
-      if (!newValue || props.id == null) {
-          budget_data.value.status_id = null;
-          budget_data.value.status_name = '';
-          budget_data.value.budget_name = '';
-          budget_data.value.amount_to_budget = '';
-          budget_data.value.cutoff_type = null;
-          budget_data.value.cutoff_type_name = '';
-          budget_data.value.budget_date = new Date().toISOString().slice(0, 10);
-          budget_data.value.budget_details = [];
-      }
+    if (!newValue || props.id == null) {
+        budget_data.value.status_id = null;
+        budget_data.value.status_name = '';
+        budget_data.value.budget_name = '';
+        budget_data.value.amount_to_budget = '';
+        budget_data.value.cutoff_type = null;
+        budget_data.value.cutoff_type_name = '';
+        budget_data.value.budget_date = new Date().toISOString().slice(0, 10);
+        budget_data.value.budget_details = [];
+    }
 
-      if (props.id > 0) {
-          get_budget_data(props.id);
-      }
-  });
+    if (props.id > 0) {
+        get_budget_data(props.id);
+    }
+});
 
-  async function get_budget_data(id){
-    loading.value = true;
-      try {
-          const response = await axios.get(`api/budget/${id}`);
-          let budget_from_db = response.data.budget || [];
+async function get_budget_data(id){
+  loading.value = true;
+    try {
+        const response = await axios.get(`api/budget/${id}`);
+        let budget_from_db = response.data.budget || [];
 
-          if (Object.keys(budget_from_db).length > 0) {
-              set_budget_data(budget_from_db);
-          }
+        if (Object.keys(budget_from_db).length > 0) {
+            set_budget_data(budget_from_db);
+        }
 
-      } catch (error) {
-          console.error('Error fetching statuses:', error);
-      }
-    loading.value = false;
-  }
+    } catch (error) {
+        console.error('Error fetching statuses:', error);
+    }
+  loading.value = false;
+}
 
-  function set_budget_data(data) {
-      budget_data.value.status_id = data.status_id;
-      budget_data.value.status_name = data.status_name;
-      budget_data.value.budget_name = data.budget_name;
-      budget_data.value.amount_to_budget = data.amount_to_budget;
-      budget_data.value.cutoff_type = data.cutoff_type;
-      budget_data.value.cutoff_type_name = data.cutoff_type_name;
-      budget_data.value.budget_date = data.budget_date;
-      budget_data.value.budget_details = data.budget_details;
+function set_budget_data(data) {
+    budget_data.value.status_id = data.status_id;
+    budget_data.value.status_name = data.status_name;
+    budget_data.value.budget_name = data.budget_name;
+    budget_data.value.amount_to_budget = data.amount_to_budget;
+    budget_data.value.cutoff_type = data.cutoff_type;
+    budget_data.value.cutoff_type_name = data.cutoff_type_name;
+    budget_data.value.budget_date = data.budget_date;
+    budget_data.value.budget_details = data.budget_details;
 
-      for (let i = 0; i < budget_data.value.budget_details.length; i++) {
-          filter_detail_type_dropdown(i);
-          update_budget_type(i);
-      }
+    for (let i = 0; i < budget_data.value.budget_details.length; i++) {
+        filter_detail_type_dropdown(i);
+        update_budget_type(i);
+    }
 
-      budget_data.value.type = data.type;
-  }
+    budget_data.value.type = data.type;
+}
 
-  async function get_statuses() {
-      try {
-          const response = await axios.get('api/statuses');
-          statuses.value = response.data.status || [];
-      } catch (error) {}
-  }
+async function get_statuses() {
+    try {
+        const response = await axios.get('api/statuses');
+        statuses.value = response.data.status || [];
+    } catch (error) {}
+}
 
-  async function get_cutoff_types() {
-      try {
-          const response = await axios.get('api/cutoff_types');
-          cutoff_types.value = response.data.cutoff_types || [];
-      } catch (error) {}
-  }
+async function get_cutoff_types() {
+    try {
+        const response = await axios.get('api/cutoff_types');
+        cutoff_types.value = response.data.cutoff_types || [];
+    } catch (error) {}
+}
 
-  async function get_budget_types() {
-      try {
-          const response = await axios.get('api/budget_types');
-          income_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Income");
-          expense_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Expense");
-      } catch (error) {}
-  }
+async function get_budget_types() {
+    try {
+        const response = await axios.get('api/budget_types');
+        income_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Income");
+        expense_budget_types.value = (response.data.budget_types || []).filter(type => type.type === "Expense");
+    } catch (error) {}
+}
 
-  function update_status_name() {
-      const selectedStatus = statuses.value.find(status => status.id === budget_data.value.status_id);
-      if (selectedStatus) {
-          budget_data.value.status_name = selectedStatus.name;
-      }
-  }
+function update_status_name() {
+    const selectedStatus = statuses.value.find(status => status.id === budget_data.value.status_id);
+    if (selectedStatus) {
+        budget_data.value.status_name = selectedStatus.name;
+    }
+}
 
-  function update_cutoff_type() {
-      const selectedCutoffType = cutoff_types.value.find(cutoff_type => cutoff_type.id === budget_data.value.cutoff_type);
-      if (selectedCutoffType) {
-          budget_data.value.cutoff_type_name = selectedCutoffType.name;
-      }
-  }
+function update_cutoff_type() {
+    const selectedCutoffType = cutoff_types.value.find(cutoff_type => cutoff_type.id === budget_data.value.cutoff_type);
+    if (selectedCutoffType) {
+        budget_data.value.cutoff_type_name = selectedCutoffType.name;
+    }
+}
 
-  function update_budget_type(index) {
-      let selectedType = null;
+function update_budget_type(index) {
+    let selectedType = null;
 
-      if (budget_data.value.budget_details[index].type == "Income") {
-          selectedType = income_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
-      } else {
-          selectedType = expense_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
-      }
+    if (budget_data.value.budget_details[index].type == "Income") {
+        selectedType = income_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
+    } else {
+        selectedType = expense_budget_types.value.find(type => type.id === budget_data.value.budget_details[index].budget_type_id);
+    }
 
-      if (selectedType) {
-          budget_data.value.budget_details[index].budget_type_name = selectedType.name;
-      }
-  }
+    if (selectedType) {
+        budget_data.value.budget_details[index].budget_type_name = selectedType.name;
+    }
+}
 
-  function filter_detail_type_dropdown(index) {
-      let type = budget_data.value.budget_details[index].type;
-      budget_data.value.budget_details[index].budget_types = budget_types.value.filter(j => j.type === type);
-  }
+function filter_detail_type_dropdown(index) {
+    let type = budget_data.value.budget_details[index].type;
+    budget_data.value.budget_details[index].budget_types = budget_types.value.filter(j => j.type === type);
+}
 
-  function add_budget_detail() {
-      budget_data.value.budget_details.push({
-          budget_type_id: null,
-          budget_type_name: '',
-          description: '',
-          amount: '',
-          is_used: false,
-          type: ''
-      });
-  }
+function add_budget_detail() {
+    budget_data.value.budget_details.push({
+        budget_type_id: null,
+        budget_type_name: '',
+        description: '',
+        amount: '',
+        is_used: false,
+        type: ''
+    });
+}
 
-  function remove_budget_detail(index) {
-      budget_data.value.budget_details.splice(index, 1);
-  }
+function remove_budget_detail(index) {
+    budget_data.value.budget_details.splice(index, 1);
+}
 
-  function delete_budget() {
-      if(props.id > 0) {
-          try {
-              axios.post(`/api/budget-delete/${props.id}`, budget_data.value).then((response) => {
-                  close_modal();
-              });
-          } catch (err) {}
-      }
-  }
+function delete_budget() {
+    if(props.id > 0) {
+        try {
+            axios.post(`/api/budget-delete/${props.id}`, budget_data.value).then((response) => {
+                close_modal();
+            });
+        } catch (err) {}
+    }
+}
 
-  function accept_action() {
-    loading.value = true;
-      if (!budget_data.value.budget_name || !budget_data.value.status_id || !budget_data.value.amount_to_budget || !budget_data.value.cutoff_type || !budget_data.value.budget_date) {
-          alert('Please fill in all required budget fields');
-          return;
-      }
+function accept_action() {
+  loading.value = true;
+    if (!budget_data.value.budget_name || !budget_data.value.status_id || !budget_data.value.amount_to_budget || !budget_data.value.cutoff_type || !budget_data.value.budget_date) {
+        alert('Please fill in all required budget fields');
+        return;
+    }
 
-      for (let i = 0; i < budget_data.value.budget_details.length; i++) {
-          const detail = budget_data.value.budget_details[i];
-          if (!detail.budget_type_id || !detail.amount) {
-              alert(`Please fill in all required fields for Budget Detail ${i + 1}`);
-              return;
-          }
-      }
+    for (let i = 0; i < budget_data.value.budget_details.length; i++) {
+        const detail = budget_data.value.budget_details[i];
+        if (!detail.budget_type_id || !detail.amount) {
+            alert(`Please fill in all required fields for Budget Detail ${i + 1}`);
+            return;
+        }
+    }
 
-      if(props.id > 0) {
-          try {
-              axios.post(`/api/budget/${props.id}`, budget_data.value).then((response) => {
-                  console.log(response);
+    if(props.id > 0) {
+        try {
+            axios.post(`/api/budget/${props.id}`, budget_data.value).then((response) => {
+                console.log(response);
 
-                  emit('accept', {
-                      ...budget_data.value,
-                  });
-              });
-          } catch (err) {}
-      } else {
-          try {
-              axios.post('/api/budget', budget_data.value).then((response) => {
-                  console.log(response);
+                emit('accept', {
+                    ...budget_data.value,
+                });
+            });
+        } catch (err) {}
+    } else {
+        try {
+            axios.post('/api/budget', budget_data.value).then((response) => {
+                console.log(response);
 
-                  emit('accept', {
-                      ...budget_data.value,
-                  });
-              });
-          } catch (err) {}
-      }
-    loading.value = false;
-  }
+                emit('accept', {
+                    ...budget_data.value,
+                });
+            });
+        } catch (err) {}
+    }
+  loading.value = false;
+}
 
-  function decline_action() {
-      emit('decline');
-  }
+function decline_action() {
+    emit('decline');
+}
 
-  function close_modal() {
-      emit('close');
-  }
+function close_modal() {
+    emit('close');
+}
 
 </script>
 

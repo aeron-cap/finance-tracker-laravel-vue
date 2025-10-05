@@ -1,51 +1,52 @@
 <template>
-    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-stone-950/60">
+    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/70 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-4xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Create Account
+            <div class="relative bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between p-6 border-b border-gray-700/50">
+                    <h3 class="text-2xl font-bold text-white">
+                        {{ props.id ? 'Edit Account' : 'Create Account' }}
                     </h3>
                     <button 
                         type="button" 
                         @click="decline_action"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        class="text-gray-400 hover:bg-slate-700/50 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-centers transition-colors">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <div :class="{ 'disabled-div': loading }" class="p-4 md:p-5 space-y-6">
+
+                <div :class="{ 'disabled-div': loading }" class="p-6 space-y-6">
                     <form @submit.prevent="accept_action" class="space-y-6">
-                        <!-- Account Information Section -->
-                        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Account Information</h4>
+                        <div class="bg-slate-700/30 p-6 rounded-xl border border-gray-700/50">
+                            <h4 class="text-lg font-semibold text-white mb-4">Account Information</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="account-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account Name</label>
+                                    <label for="account-name" class="block mb-2 text-sm font-medium text-gray-300">Account Name</label>
                                     <input 
                                         type="text" 
                                         id="account-name" 
                                         v-model="account_data.name"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-all" 
                                         placeholder="Enter account name"
                                         required>
                                 </div>
                                 
                                 <div>
-                                    <label for="status-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Status</label>
+                                    <label for="status-select" class="block mb-2 text-sm font-medium text-gray-300">Select Status</label>
                                     <select 
                                         id="status-select" 
                                         v-model="account_data.status_id"
                                         @change="update_status_name"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        class="bg-slate-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all [&>option]:bg-slate-800 [&>option]:text-white"
                                         required>
-                                        <option value="" disabled>Choose a status</option>
+                                        <option value="" disabled class="bg-slate-800">Choose a status</option>
                                         <option 
                                             v-for="status in statuses" 
                                             :key="status.id" 
-                                            :value="status.id">
+                                            :value="status.id"
+                                            class="bg-slate-800">
                                             {{ status.name }}
                                         </option>
                                     </select>
@@ -53,12 +54,12 @@
                             </div>
 
                             <div class="mt-4">
-                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                                <label for="account-description" class="block mb-2 text-sm font-medium text-gray-300">Description</label>
                                 <textarea 
                                     id="account-description"
                                     v-model="account_data.description"
-                                    rows="2" 
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                    rows="3" 
+                                    class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-all" 
                                     placeholder="Describe this account detail..."></textarea>
                             </div>
 
@@ -73,25 +74,25 @@
                         </div>
                     </form>
                 </div>
-                <div :class="{ 'disabled-div': loading }" class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+                <div :class="{ 'disabled-div': loading }" class="flex items-center gap-3 p-6 border-t border-gray-700/50">
                     <button 
                         @click="accept_action" 
                         type="button" 
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <span v-if="props.id !== null"> Update Account </span>
-                        <span v-if="props.id == null"> Create Account </span>
+                        class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50">
+                        {{ props.id ? 'Update Account' : 'Create Account' }}
                     </button>
                     <button 
                         @click="decline_action" 
                         type="button" 
-                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        class="px-6 py-3 text-sm font-medium text-gray-300 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-gray-600 transition-all">
                         Cancel
                     </button>
                     <button 
                         v-if="props.id !== null"
                         @click="delete_account" 
                         type="button" 
-                        class="py-2.5 px-5 ms-3 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-gray-100 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-700 dark:bg-red-800 dark:text-red-400 dark:border-red-600 dark:hover:text-white dark:hover:bg-red-700">
+                        class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all hover:scale-105 hover:shadow-lg hover:shadow-red-500/50 ml-auto">
                         Delete
                     </button>
                 </div>
@@ -143,7 +144,6 @@ watch(() => props.show, (newValue) => {
         account_data.value.breakdown = '';
     }
 
-    // if props.id, get the data
     if (props.id > 0) {
         get_account_data(props.id);
     }
@@ -156,9 +156,8 @@ async function get_account_data(id) {
     let account_from_db = response.data.account || [];
 
     if (Object.keys(account_from_db).length > 0) {
-    // set the data
-    set_account_data(account_from_db);
-  }
+        set_account_data(account_from_db);
+    }
   } catch (error) {
     console.error('Error fetching accounts', error);
   }
@@ -188,7 +187,7 @@ function delete_account() {
       axios.post(`/api/account-delete/${props.id}`, account_data.value).then((response) => {
         close_modal();
       });
-  } catch (err) {}
+    } catch (err) {}
   }
 }
 
@@ -232,7 +231,6 @@ function accept_action() {
   if (props.id > 0) {
     try {
       axios.post(`api/account/${props.id}`, account_data.value).then((response) => {
-
         emit('accept', {
           ...account_data.value
         });
@@ -241,7 +239,6 @@ function accept_action() {
   } else {
     try {
       axios.post("api/account", account_data.value).then((response) => {
-    
         emit('accept', {
           ...account_data.value
         });
@@ -267,7 +264,6 @@ async function get_budget_types() {
 function close_modal() {
   emit('close');
 }
-
 </script>
 
 <style scoped>

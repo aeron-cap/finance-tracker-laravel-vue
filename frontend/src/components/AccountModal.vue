@@ -66,7 +66,7 @@
                             <div class="mt-4">
                                 <Chips
                                   :items="budget_types"
-                                  v-model="selected_breakdowns[account_data.name]"
+                                  v-model="selected_breakdowns[account_name]"
                                   label="Select Breakdown"
                                   @change="handle_breakdown_change"
                                 />
@@ -132,6 +132,7 @@ const budget_types = ref([]);
 const loading = ref(false);
 const selected_breakdowns = ref([]);
 const breakdown_to_save = ref([]);
+var account_name = null;
 
 watch(() => props.show, (newValue) => {
     get_statuses();
@@ -170,11 +171,14 @@ function set_account_data(data) {
   account_data.value.status_id = data.status_id;
   account_data.value.status_name = data.status.name;
 
+  account_name = data.name;
+
   build_breakdown_data(data.breakdown, "view");
 }
 
 function handle_breakdown_change(selected_items) {
-  breakdown_to_save.value[account_data.value.name] = selected_breakdowns.value[account_data.value.name];
+  breakdown_to_save.value[account_name] = selected_breakdowns.value[account_name];
+  console.log("handle", breakdown_to_save.value[account_name].length);
 }
 
 function decline_action() {
@@ -202,7 +206,6 @@ function build_breakdown_data(types, transaction) {
     
   } else if (transaction == "view") {
     let breakdown_json = JSON.parse(types);
-    
     selected_breakdowns.value[account_data.value.name] = [];
 
     for (let j in breakdown_json) {
@@ -224,8 +227,8 @@ function accept_action() {
     return;
   }
 
-  if(breakdown_to_save.value[account_data.value.name].length > 0) {
-    build_breakdown_data(breakdown_to_save.value[account_data.value.name], "save");
+  if(breakdown_to_save.value[account_name].length > 0) {
+    build_breakdown_data(breakdown_to_save.value[account_name], "save");
   }
 
   if (props.id > 0) {

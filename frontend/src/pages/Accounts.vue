@@ -173,14 +173,14 @@
                                         </tr>
                                     </thead>
 
-                                    <tbody v-if="account_for_breakdown && breakdown_details[account_for_breakdown] && breakdown_details[account_for_breakdown].length > 0">
+                                    <tbody v-if="id_to_breakdown > 0 && breakdown_summary[id_to_breakdown]">
                                         <tr 
-                                            v-for="(type, index) in breakdown_details[account_for_breakdown]" 
-                                            :key="type.budget_type_name || index" 
+                                            v-for="(type, index) in breakdown_summary[id_to_breakdown]" 
+                                            :key="index" 
                                             class="bg-slate-800/30 border-b border-gray-700/50 hover:bg-slate-700/30 transition-colors"
                                         >
                                             <th scope="row" class="px-6 py-4 font-medium text-white">
-                                                {{ type.budget_type_name || `Type ${index + 1}` }}
+                                                {{ index }}
                                             </th>
                                             <td class="px-6 py-4 font-semibold text-purple-400">
                                                 P{{ Math.abs(parseFloat(type.total || 0)).toFixed(2) }}
@@ -194,7 +194,7 @@
                                     <tbody v-else>
                                         <tr>
                                             <td colspan="3" class="text-center py-8 text-gray-500">
-                                                {{ account_for_breakdown ? 'No Breakdown Available' : 'Select an account to view breakdown' }}
+                                                {{ id_to_breakdown > 0 ? 'No Breakdown Available' : 'Select an account to view breakdown' }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -220,8 +220,8 @@ const loading = ref(false);
 const error = ref(null);
 const showModal = ref(false);
 const account_id = ref(false);
-const breakdown_details = ref({});
-const account_for_breakdown = ref(null);
+const breakdown_summary = ref({});
+const id_to_breakdown = ref(0);
 
 onMounted(() => {
     get_all_accounts();
@@ -274,23 +274,27 @@ async function edit_actual_balance(id, balance) {
         });
         get_all_accounts();
     } catch (error) {
-        console.error('Error updating balance:', error);
     }
 }
 
 async function show_breakdown(id) {
-    account_for_breakdown.value = id;
-    
-    if (!breakdown_details.value[id]) {
-        breakdown_details.value[id] = [];
-    }
-    
-    try {
+    if (id !== "") {
+      id_to_breakdown.value = id;
+      
+      if (!breakdown_summary.value[id]) {
+        breakdown_summary.value[id] = [];
+      }
+      
+      try {
         const response = await axios.post(`api/show-account-breakdown/${id}`);
-        breakdown_details.value[id] = response.data.breakdown_summary || [];
-    } catch (error) {
-        console.error('Error fetching breakdown:', error);
-        breakdown_details.value[id] = [];
+        breakdown_summary.value[id] = response.data.breakdown_summary || [];
+      } catch (error) {
+        breakdown_summary.value[id] = [];
+        id_to_breakdown.value = 0;
+      }
+    } else {
+      id_to_breakdown.value = 0;
+      breakdown_summary.value[0] = [];
     }
 }
 </script>

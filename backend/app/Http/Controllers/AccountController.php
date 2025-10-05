@@ -46,7 +46,11 @@ class AccountController extends Controller
 
         $breakdown = null !== $request->get('breakdown') ? $request->get('breakdown') : null;
 
-        $a = auto_create(Account::class, $account, ['user_id' => $user->id, 'breakdown' => $breakdown]);
+        if ($breakdown != null) {
+          $a = auto_create(Account::class, $account, ['user_id' => $user->id, 'breakdown' => $breakdown]);
+        } else {
+          $a = auto_create(Account::class, $account, ['user_id' => $user->id]);
+        }
 
         if ($a->save()) {
             return response()->json([
@@ -171,7 +175,7 @@ class AccountController extends Controller
         $expenses = Expense::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(expense_date), "N/A") as as_of')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(expense_date), "-") as as_of')
             ->groupBy('budget_type_name')
             ->get()
             ->keyBy('budget_type_name');
@@ -179,7 +183,7 @@ class AccountController extends Controller
         $incomes = Income::where('user_id', $user->id)
             ->where('account_id', $id)
             ->whereIn('budget_type_name', $breakdown)
-            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(income_date), "N/A") as as_of')
+            ->selectRaw('budget_type_name, SUM(amount) as total_amount, COALESCE(MAX(income_date), "-") as as_of')
             ->groupBy('budget_type_name')
             ->get()
             ->keyBy('budget_type_name');

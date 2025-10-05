@@ -249,7 +249,7 @@
         }
       }
     } catch (err) {
-      error.value = err.response?.data?.message || err.message || 'Failed to load budgets';
+      error.value = 'Failed to load budgets';
     } finally {
       loading.value = false;
     }

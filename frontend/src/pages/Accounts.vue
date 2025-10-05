@@ -235,7 +235,7 @@ async function get_all_accounts() {
         const response = await axios.get('api/accounts');
         accounts_data.value = response.data.accounts || [];
     } catch (err) {
-        error.value = err.response?.data?.message || err.message || 'Failed to load accounts';
+        error.value = 'Failed to load accounts';
     } finally {
         loading.value = false;
     }

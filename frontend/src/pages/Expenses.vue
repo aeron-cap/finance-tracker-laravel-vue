@@ -193,7 +193,7 @@ async function get_all_expenses() {
     total_data = response.data.expense.length;
 
   } catch (error) {
-    error.value = error.response?.data?.message || error.message || 'Failed to load expenses'  
+    error.value = 'Failed to load expenses'  
   } finally {
     loading.value = false;
     for (let i = 0; i < 2; i++) {

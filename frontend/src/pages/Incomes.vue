@@ -192,7 +192,7 @@ async function get_all_incomes() {
     total_data = response.data.income.length;
 
   } catch (error) {
-    error.value = error.response?.data?.message || error.message || 'Failed to load incomes'  
+    error.value = 'Failed to load incomes'  
   } finally {
     loading.value = false;
     for (let i = 0; i < 2; i++) {

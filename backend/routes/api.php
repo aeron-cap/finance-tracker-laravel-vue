@@ -75,6 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(BudgetTypeController::class)->group(function () {
         Route::get('/budget_types', 'index');
+        Route::post('/specific_budget_type', 'specific');
     });
 
 });

@@ -49,7 +49,6 @@ class BudgetController extends Controller
             'budget_details' => 'required|array',
             'budget_details.*.budget_type_id' => 'required',
             'budget_details.*.budget_type_name' => 'required',
-            'budget_details.*.description' => 'required',
             'budget_details.*.amount' => 'required|numeric',
             'budget_details.*.is_used' => 'required',
             'budget_details.*.type' => 'required',

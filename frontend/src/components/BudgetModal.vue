@@ -98,7 +98,10 @@
 
                         <div class="bg-slate-700/30 p-6 rounded-xl border border-gray-700/50">
                             <div class="flex justify-between items-center mb-4">
+                              <div class="flex justify-start items-center">
                                 <h4 class="text-lg font-semibold text-white">Budget Details</h4>
+                                <p class="ml-8 text-white text-xs">Remaining: {{ remaining_budget }}</p>
+                              </div>
                                 <button 
                                     type="button" 
                                     @click="add_budget_detail"
@@ -194,7 +197,9 @@
                                             min="0"
                                             class="bg-slate-700/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 placeholder-gray-500 transition-all" 
                                             placeholder="Enter amount"
-                                            required>
+                                            required
+                                            @change="compute_remaining()"
+                                          >
                                     </div>
                                 </div>
 
@@ -271,6 +276,7 @@ const cutoff_types = ref([]);
 const income_budget_types = ref([]);
 const expense_budget_types = ref([]);
 const loading = ref(false);
+const remaining_budget = ref(0);
 
 watch(() => props.show, (newValue) => {
     get_statuses();
@@ -393,8 +399,17 @@ function add_budget_detail() {
     });
 }
 
+function compute_remaining() {
+  remaining_budget.value = budget_data.value.amount_to_budget;
+  for (let i in budget_data.value.budget_details) {
+    let bd = budget_data.value.budget_details[i];
+    remaining_budget.value -= bd.amount;
+  }
+}
+
 function remove_budget_detail(index) {
     budget_data.value.budget_details.splice(index, 1);
+    compute_remaining();
 }
 
 function delete_budget() {

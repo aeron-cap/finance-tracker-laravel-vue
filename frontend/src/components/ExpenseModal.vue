@@ -237,9 +237,9 @@ async function get_accounts() {
   }catch (error) {}
 }
 
-function get_budget_types() {
+async function get_budget_types() {
   try {
-    axios.get('api/budget_types', {type: 'Expense'}).then((response) => {
+    axios.get('api/specific_budget_type', {type: 'Expense'}).then((response) => {
       const raw = response.data.budget_types || {};
       expense_budget_types.value = Array.isArray(raw) ? raw : Object.values(raw);
     })

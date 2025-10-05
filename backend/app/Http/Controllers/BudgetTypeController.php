@@ -21,7 +21,6 @@ class BudgetTypeController extends Controller
             $budget_types = BudgetType::all();
         }
 
-
         if ($budget_types->isEmpty()) {
             return response()->json([
                 'message' => 'No budget types found',
@@ -64,5 +63,26 @@ class BudgetTypeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function specific(Request $request) {
+        $type = $request->get('type');
+
+        if ($type !== null) {
+            $budget_types = BudgetType::all()->where('type', $type);
+        } else {
+            $budget_types = BudgetType::all();
+        }
+
+        if ($budget_types->isEmpty()) {
+            return response()->json([
+                'message' => 'No budget types found',
+            ], 204);
+        }
+
+        return response()->json([
+            'message' => 'Budget Types found',
+            'budget_types' => $budget_types,
+        ], 200);
     }
 }

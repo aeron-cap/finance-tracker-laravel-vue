@@ -6,6 +6,15 @@
 
     <div class="absolute inset-0 bg-slate-900/40"></div>
 
+    <div class="absolute top-2 left-2 text-xs text-gray-200">
+      <RouterLink :to="{name: 'Landing'}" class="flex">
+        <svg class="w-4 h-4 text-gray-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+        </svg>
+        <p class="pl-2">Back to Landing</p>
+      </RouterLink>
+    </div>
+
     <div
       class="relative w-full max-w-md lg:max-w-lg mx-4 space-y-8 p-8 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-md bg-slate-800/50 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300"
     >
@@ -27,7 +36,7 @@
           Sign in to your account
         </h2>
         <p class="text-center text-base text-gray-400">
-          Welcome back! Please sign in to continue
+          Welcome! Please sign in to continue
         </p>
       </div>
 
@@ -67,9 +76,12 @@
 </template>
 
 <script setup>
-  async function google_login() {
-    window.location.href = "http://localhost:8000/api/auth/google/redirect";
-  }
+import { RouterLink } from 'vue-router';
+import Landing from './Landing.vue';
+
+async function google_login() {
+  window.location.href = "http://localhost:8000/api/auth/google/redirect";
+}
 
 </script>
 

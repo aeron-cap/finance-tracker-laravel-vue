@@ -20,9 +20,10 @@
               <a href="#features" class="text-gray-300 hover:text-white transition-colors">
                 Features
               </a>
-              <button class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 hover:shadow-lg hover:scale-105 transition-all duration-300">
+              <RouterLink :to="{name: 'Login'}"
+                class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 hover:shadow-lg hover:scale-105 transition-all duration-300">
                 Get Started
-              </button>
+              </RouterLink>
             </div>
 
             <button 
@@ -44,9 +45,11 @@
             <a href="#features" class="block text-gray-300 hover:text-white py-2">
               Features
             </a>
-            <button class="w-full px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700">
+            <RouterLink :to="{name: 'Login'}"
+            class="w-full px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700"
+            >
               Get Started
-            </button>
+            </RouterLink>
           </div>
         </div>
       </div>
@@ -163,37 +166,38 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { RouterLink } from 'vue-router';
 
-  const mobileMenuOpen = ref(false);
-  const scrolled = ref(false);
+const mobileMenuOpen = ref(false);
+const scrolled = ref(false);
 
-  const handleScroll = () => {
-    scrolled.value = window.scrollY > 50;
-  };
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 50;
+};
 
-  onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
-  });
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
 
-  onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-  });
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 
-  const features = [
-    {
-      icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>',
-      title: "Budget Planning",
-      description: "Create custom budgets and monitor your progress with intuitive visualizations"
-    },
-    {
-      icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>',
-      title: "Real-Time Sync",
-      description: "Automatic transaction syncing across all your accounts and devices"
-    }
-  ];
+const features = [
+  {
+    icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>',
+    title: "Budget Planning",
+    description: "Create custom budgets and monitor your progress with intuitive visualizations"
+  },
+  {
+    icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>',
+    title: "Real-Time Sync",
+    description: "Automatic transaction syncing across all your accounts and devices"
+  }
+];
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

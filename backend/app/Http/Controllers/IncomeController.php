@@ -49,8 +49,8 @@ class IncomeController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
-            'budget_id' => 'required|numeric',
-            'budget_name' => 'required',
+            'budget_id' => 'nullable|numeric',
+            'budget_name' => 'nullable'
         ]);
 
         $i = auto_create(Income::class, $income, ['user_id' => $user->id]);
@@ -105,8 +105,8 @@ class IncomeController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
-            'budget_id' => 'required|numeric',
-            'budget_name' => 'required',
+            'budget_id' => 'nullable|numeric',
+            'budget_name' => 'nullable'
         ]);
 
         $existing_i = Income::where('id', $id)->first();

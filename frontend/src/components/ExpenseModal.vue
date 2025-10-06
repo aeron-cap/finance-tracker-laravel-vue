@@ -1,8 +1,9 @@
 <template>
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/70 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-4xl max-h-full">
-            <div class="relative bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between p-6 border-b border-gray-700/50">
+            <div class="relative bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 max-h-[90vh] flex flex-col">
+                
+                <div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
                     <h3 class="text-2xl font-bold text-white">
                         {{ props.id ? 'Edit Expense Record' : 'Create Expense Record' }}
                     </h3>
@@ -17,7 +18,7 @@
                     </button>
                 </div>
 
-                <div :class="{ 'disabled-div': loading }" class="p-6 space-y-6">
+                <div :class="{ 'disabled-div': loading }" class="p-6 space-y-6 overflow-y-auto flex-grow">
                     <form @submit.prevent="accept_action" class="space-y-6">
                         <div class="bg-slate-700/30 p-6 rounded-xl border border-gray-700/50">
                             <h4 class="text-lg font-semibold text-white mb-4">Expense Information</h4>
@@ -115,7 +116,7 @@
                     </form>
                 </div>
 
-                <div :class="{ 'disabled-div': loading }" class="flex items-center gap-3 p-6 border-t border-gray-700/50">
+                <div :class="{ 'disabled-div': loading }" class="flex items-center gap-3 p-6 border-t border-gray-700/50 **sticky bottom-0 bg-slate-800/60 backdrop-blur-md rounded-b-2xl flex-shrink-0**">
                     <button
                         @click="accept_action" 
                         type="button" 
@@ -192,7 +193,7 @@ watch(() => props.show, (newValue) => {
     expense_data.value.description = '',
     expense_data.value.status_id = 1,
     expense_data.value.status_name = 'New',
-    expense_data.value.budget_id = '',
+    expense_data.value.budget_id = null,
     expense_data.value.budget_name = ''
   }
 
@@ -239,7 +240,7 @@ async function get_accounts() {
 
 async function get_budget_types() {
   try {
-    axios.get('api/specific_budget_type', {type: 'Expense'}).then((response) => {
+    axios.post('api/specific_budget_type', {type: 'Expense'}).then((response) => {
       const raw = response.data.budget_types || {};
       expense_budget_types.value = Array.isArray(raw) ? raw : Object.values(raw);
     })
@@ -249,7 +250,8 @@ async function get_budget_types() {
 async function get_budgets() {
   try {
     await axios.get('api/budgets').then((response) => {
-      budgets.value = response.data.budgets || [];
+      const raw = response.data.budgets || {};
+      budgets.value = Array.isArray(raw) ? raw : Object.values(raw);
     })
   }catch (error) {}
 }
@@ -279,7 +281,6 @@ function update_account() {
 }
 
 function update_budget_name() {
-  console.log(budgets.value, expense_data.value.budget_id);
   const selected_budget = budgets.value.find(
     j => j.id === expense_data.value.budget_id
   );
@@ -319,14 +320,13 @@ function accept_action() {
     !expense_data.value.amount ||
     !expense_data.value.description ||
     !expense_data.value.status_id ||
-    !expense_data.value.status_name ||
-    !expense_data.value.budget_id || 
-    !expense_data.value.budget_name
+    !expense_data.value.status_name
   ) {
     alert('Please fill in all required budget fields');
     return;
   }
 
+  console.log(props.id);
   if(props.id > 0) {
     try {
       axios.post(`/api/expense/${props.id}`, expense_data.value).then((response) => {

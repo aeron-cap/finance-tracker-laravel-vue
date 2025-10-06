@@ -262,7 +262,6 @@ function edit_record(id) {
 
 function close_modal() {
   showModal.value = false;
-  get_all_expenses();
 }
 
 function handle_decline() {

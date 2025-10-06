@@ -1,8 +1,8 @@
 <template>
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black/70 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-4xl max-h-full">
-            <div class="relative bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between p-6 border-b border-gray-700/50">
+            <div class="relative bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 max-h-[75vh] flex flex-col">
+                <div class="flex items-center justify-between p-6 border-b border-gray-700/50 flex-shrink-0">
                     <h3 class="text-2xl font-bold text-white">
                         {{ props.id ? 'Edit Budget' : 'Create Budget' }}
                     </h3>
@@ -17,7 +17,7 @@
                     </button>
                 </div>
 
-                <div :class="{ 'disabled-div': loading }" class="p-6 space-y-6">
+                <div :class="{ 'disabled-div': loading }" class="p-6 space-y-6 overflow-y-auto flex-grow">
                     <form @submit.prevent="accept_action" class="space-y-6">
                         <div class="bg-slate-700/30 p-6 rounded-xl border border-gray-700/50">
                             <h4 class="text-lg font-semibold text-white mb-4">Budget Information</h4>
@@ -98,10 +98,10 @@
 
                         <div class="bg-slate-700/30 p-6 rounded-xl border border-gray-700/50">
                             <div class="flex justify-between items-center mb-4">
-                              <div class="flex justify-start items-center">
-                                <h4 class="text-lg font-semibold text-white">Budget Details</h4>
-                                <p class="ml-8 text-white text-xs">Remaining: {{ remaining_budget }}</p>
-                              </div>
+                                <div class="flex justify-start items-center">
+                                    <h4 class="text-lg font-semibold text-white">Budget Details</h4>
+                                    <p class="ml-8 text-white text-xs">Remaining: {{ remaining_budget }}</p>
+                                </div>
                                 <button 
                                     type="button" 
                                     @click="add_budget_detail"
@@ -199,7 +199,7 @@
                                             placeholder="Enter amount"
                                             required
                                             @change="compute_remaining()"
-                                          >
+                                        >
                                     </div>
                                 </div>
 
@@ -217,7 +217,7 @@
                     </form>
                 </div>
 
-                <div :class="{ 'disabled-div': loading }" class="flex items-center gap-3 p-6 border-t border-gray-700/50">
+                <div :class="{ 'disabled-div': loading }" class="flex items-center gap-3 p-6 border-t border-gray-700/50 sticky bottom-0 bg-slate-800/60 backdrop-blur-md rounded-b-2xl flex-shrink-0">
                     <button 
                         @click="accept_action" 
                         type="button" 

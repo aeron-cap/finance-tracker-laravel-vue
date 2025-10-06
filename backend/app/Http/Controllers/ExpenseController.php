@@ -49,6 +49,8 @@ class ExpenseController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
+            'budget_id' => 'nullable|numeric',
+            'budget_name' => 'nullable'
         ]);
 
         $e = auto_create(Expense::class, $expense, ['user_id' => $user->id]);
@@ -103,6 +105,8 @@ class ExpenseController extends Controller
             'description' => 'required',
             'status_id' => 'required|numeric',
             'status_name' => 'required',
+            'budget_id' => 'nullable|numeric',
+            'budget_name' => 'nullable'
         ]);
 
         $existing_e = expense::where('id', $id)->first();

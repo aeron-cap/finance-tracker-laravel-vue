@@ -261,7 +261,7 @@ function edit_record(id) {
 
 function close_modal() {
   showModal.value = false;
-  get_all_incomes();
+  this.$router.go();
 }
 
 function handle_decline() {

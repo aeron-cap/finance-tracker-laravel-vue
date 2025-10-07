@@ -326,7 +326,6 @@ function accept_action() {
     return;
   }
 
-  console.log(props.id);
   if(props.id > 0) {
     try {
       axios.post(`/api/expense/${props.id}`, expense_data.value).then((response) => {

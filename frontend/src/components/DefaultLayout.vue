@@ -216,6 +216,7 @@
       default:
         break;
     }
+    location.reload(true);
   }
 
   const quick_add_expense = () => {

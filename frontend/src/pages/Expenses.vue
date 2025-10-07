@@ -104,7 +104,7 @@
                                         </button>
                                     </li>
                                 </ul>
-                                <button @click="get_more_expenses" class="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+                                <button v-if="expenses_data.length == 30" @click="get_more_expenses" class="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
                                     Load More
                                 </button>
                             </nav>
@@ -186,7 +186,7 @@ const totalInstances = computed(() => {
 
 async function get_all_expenses() {
   loading.value = true;
-
+  expenses_data.value = [];
   try {
     const response = await axios.get('api/expenses', {skip: skip});
     expenses_data.value.push(...response.data.expense || []);
@@ -196,9 +196,12 @@ async function get_all_expenses() {
     error.value = 'Failed to load expenses'  
   } finally {
     loading.value = false;
-    for (let i = 0; i < 2; i++) {
-      get_more_expenses();
-      move_page(1);
+    
+    if (total_data == page_limits) {
+      for (let i = 0; i < 2; i++) {
+        get_more_expenses();
+        move_page(1);
+      }
     }
   }
 }
@@ -262,6 +265,7 @@ function edit_record(id) {
 
 function close_modal() {
   showModal.value = false;
+  get_all_expenses();
 }
 
 function handle_decline() {

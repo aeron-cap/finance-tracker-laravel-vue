@@ -190,9 +190,16 @@ class AccountController extends Controller
 
         $breakdown_summary = [];
         foreach ($breakdown as $type) {
-            $expense_total = $expenses->get($type)->total_amount ?? 0;
-            $income_total = $incomes->get($type)->total_amount ?? 0;
-            $as_of = isset($incomes->get($type)->as_of) ? $incomes->get($type)->as_of : "N/A";
+            $expense_data = $expenses->get($type);
+            $income_data = $incomes->get($type);
+
+            $expense_total = $expense_data->total_amount ?? 0;
+            $income_total = $income_data->total_amount ?? 0;
+
+            $exp_as_of = $expense_data->as_of ?? '-';
+            $inc_as_of = $income_data->as_of ?? '-';
+            
+            $as_of = max($exp_as_of, $inc_as_of);
 
             $breakdown_summary[$type] = [
                 'total' => $income_total - $expense_total,

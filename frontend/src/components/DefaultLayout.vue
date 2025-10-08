@@ -134,10 +134,10 @@
       </div>
     </footer>
     
-    <BudgetModal :show="showBudgetModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
-    <IncomeModal :show="showIncomeModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
-    <ExpenseModal :show="showExpenseModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
-    <AccountModal :show="showAccountModal" :id=null @close="close($route.name)" @accept="close($route.name)" @decline="close($route.name)" />
+    <BudgetModal :show="showBudgetModal" :id=null @close="close($route.name, 'close')" @accept="close($route.name, 'save')" @decline="close($route.name, 'close')" />
+    <IncomeModal :show="showIncomeModal" :id=null @close="close($route.name, 'close')" @accept="close($route.name, 'save')" @decline="close($route.name, 'close')" />
+    <ExpenseModal :show="showExpenseModal" :id=null @close="close($route.name, 'close')" @accept="close($route.name, 'save')" @decline="close($route.name, 'close')" />
+    <AccountModal :show="showAccountModal" :id=null @close="close($route.name, 'close')" @accept="close($route.name, 'save')" @decline="close($route.name, 'close')" />
   </div>
 </template>
 
@@ -159,7 +159,7 @@
     { name: 'Incomes', to: {name: 'Incomes'}},
     { name: 'Expenses', to: {name: 'Expenses'}},
     { name: 'Accounts', to: {name: 'Accounts'}},
-    { name: 'Investments', to: {name: 'Investments'}},
+    // { name: 'Investments', to: {name: 'Investments'}},
   ];
 
   const currentPageTitle = computed(() => {
@@ -196,7 +196,7 @@
     }
   }
 
-  const close = (name) => {
+  const close = (name, type) => {
     switch (name) {
       case "Budgets":
         showBudgetModal.value = false;
@@ -216,7 +216,10 @@
       default:
         break;
     }
-    location.reload(true);
+
+    if (type == "save") {
+      location.reload(true);
+    }
   }
 
   const quick_add_expense = () => {

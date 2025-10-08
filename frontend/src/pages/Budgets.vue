@@ -105,7 +105,7 @@
                                                         <svg class="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                                                         </svg>
-                                                        {{ selected_budget.amount_to_budget }} - {{ selected_budget.cutoff.name }}
+                                                        {{ $formatToDecimal(selected_budget.amount_to_budget) }} - {{ selected_budget.cutoff.name }}
                                                     </p>
                                                 </div>
                                                 <div class="flex items-center space-x-4">
@@ -179,7 +179,7 @@
                                                 </th>
                                                 <td class="text-center px-6 py-5">
                                                     <span class="font-semibold text-green-400 text-lg">
-                                                        {{ budget.amount }}
+                                                        {{ $formatToDecimal(budget.amount) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-center px-6 py-5">

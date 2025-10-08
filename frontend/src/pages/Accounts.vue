@@ -70,7 +70,7 @@
                                                     Expected
                                                 </div>
                                                 <div class="text-lg font-bold text-yellow-400">
-                                                    P{{ account.expected_balance }}
+                                                    P{{ $formatToDecimal(account.expected_balance) }}
                                                 </div>
                                             </div>
                                             
@@ -108,7 +108,7 @@
                                                     </svg>
                                                     {{ parseFloat(account.actual_balance) >= parseFloat(account.expected_balance) ? 'On Track' : 'Below Target' }}
                                                     <span class="ml-1">
-                                                        (${{ Math.abs(parseFloat(account.actual_balance || 0) - parseFloat(account.expected_balance || 0)).toFixed(2) }})
+                                                        (P{{ Math.abs(parseFloat(account.actual_balance || 0) - parseFloat(account.expected_balance || 0)).toFixed(2) }})
                                                     </span>
                                                 </span>
                                             </div>
@@ -183,7 +183,7 @@
                                                 {{ index }}
                                             </th>
                                             <td class="px-6 py-4 font-semibold text-purple-400">
-                                                P{{ Math.abs(parseFloat(type.total || 0)).toFixed(2) }}
+                                                P{{ $formatToDecimal(type.total || 0) }}
                                             </td>
                                             <td class="px-6 py-4 text-gray-300">
                                                 {{ type.as_of || '-' }}

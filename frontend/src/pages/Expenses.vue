@@ -74,7 +74,7 @@
                                             {{ expense.description }}
                                         </td>
                                         <td class="px-6 py-4 font-semibold text-red-400 text-lg">
-                                            {{ expense.amount }}
+                                            {{ $formatToDecimal(expense.amount) }}
                                         </td>
                                         <td class="px-6 py-4">
                                             <button @click="edit_record(expense.id)" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">
@@ -124,7 +124,7 @@
                                         <p class="text-sm text-gray-400">{{ expense.expense_date }}</p>
                                     </div>
                                     <span class="text-xl font-bold text-red-400">
-                                        {{ expense.amount }}
+                                        {{ $formatToDecimal(expense.amount) }}
                                     </span>
                                 </div>
                                 <div class="space-y-2">
@@ -265,7 +265,6 @@ function edit_record(id) {
 
 function close_modal() {
   showModal.value = false;
-  get_all_expenses();
 }
 
 function handle_decline() {
@@ -274,6 +273,7 @@ function handle_decline() {
 
 function handle_accept() {
   close_modal();
+  get_all_expenses();
 }
 </script>
 

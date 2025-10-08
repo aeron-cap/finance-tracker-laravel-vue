@@ -20,6 +20,6 @@ class Account extends Model
         $total_incomes = Income::where('account_id', $this->id)->sum('amount');
         $total_expenses = Expense::where('account_id', $this->id)->sum('amount');
 
-        return number_format($total_incomes - $total_expenses);
+        return $total_incomes - $total_expenses;
     }
 }

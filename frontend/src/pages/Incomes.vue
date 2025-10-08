@@ -74,7 +74,7 @@
                                             {{ income.description }}
                                         </td>
                                         <td class="px-6 py-4 font-semibold text-green-400 text-lg">
-                                            {{ income.amount }}
+                                            {{ $formatToDecimal(income.amount) }}
                                         </td>
                                         <td class="px-6 py-4">
                                             <button @click="edit_record(income.id)" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">
@@ -124,7 +124,7 @@
                                         <p class="text-sm text-gray-400">{{ income.income_date }}</p>
                                     </div>
                                     <span class="text-xl font-bold text-green-400">
-                                        {{ income.amount }}
+                                        {{ $formatToDecimal(income.amount) }}
                                     </span>
                                 </div>
                                 <div class="space-y-2">
@@ -264,7 +264,6 @@ function edit_record(id) {
 
 function close_modal() {
   showModal.value = false;
-  this.$router.go();
 }
 
 function handle_decline() {
@@ -273,6 +272,7 @@ function handle_decline() {
 
 function handle_accept() {
   close_modal();
+  get_all_incomes();
 }
 </script>
 

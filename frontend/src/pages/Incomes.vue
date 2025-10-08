@@ -195,7 +195,8 @@ async function get_all_incomes() {
     error.value = 'Failed to load incomes'  
   } finally {
     loading.value = false;
-    for (let i = 0; i < 2; i++) {
+
+    if (total_data == page_limits) {
       get_more_incomes();
       move_page(1);
     }
@@ -216,7 +217,9 @@ function move_page(index) {
 }
 
 const { reset } = useInfiniteScroll(scrollContainer, () => {
-    get_more_incomes();
+    if (total_data >= page_limits) {
+      get_more_incomes();
+    }
   },
   {
     canLoadMore: () => {

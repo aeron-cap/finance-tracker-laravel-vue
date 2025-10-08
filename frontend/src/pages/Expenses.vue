@@ -198,10 +198,8 @@ async function get_all_expenses() {
     loading.value = false;
     
     if (total_data == page_limits) {
-      for (let i = 0; i < 2; i++) {
-        get_more_expenses();
-        move_page(1);
-      }
+      get_more_expenses();
+      move_page(1);
     }
   }
 }
@@ -220,7 +218,9 @@ function move_page(index) {
 }
 
 const { reset } = useInfiniteScroll(scrollContainer, () => {
-    get_more_expenses();
+    if (total_data >= page_limits) {
+      get_more_expenses();
+    }
   },
   {
     canLoadMore: () => {

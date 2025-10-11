@@ -6,7 +6,7 @@
           Dashboard
         </h1>
         <p class="text-lg text-gray-400">
-          Take a bird's eye view of your finances (Mock Data)
+          Take a bird's eye view of your finances
         </p>
       </div>
     </div>
@@ -97,55 +97,45 @@
         <div class="p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm">
           <div class="flex items-center justify-between mb-6">
             <h3 class="text-xl font-bold text-white">Recent Transactions</h3>
-            <button class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-              View All
-            </button>
           </div>
           
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-colors">
+            <div 
+              v-for="transaction in recentTransactions" 
+              :key="transaction.id"
+              class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-colors"
+            >
               <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                <div 
+                  class="w-10 h-10 rounded-lg flex items-center justify-center"
+                  :class="transaction.type === 'income' ? 'bg-green-500/20' : 'bg-red-500/20'"
+                >
+                  <svg 
+                    class="w-5 h-5" 
+                    :class="transaction.type === 'income' ? 'text-green-400' : 'text-red-400'"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      stroke-width="2" 
+                      :d="transaction.icon" 
+                    />
                   </svg>
                 </div>
                 <div>
-                  <div class="text-white font-medium">Groceries</div>
-                  <div class="text-sm text-gray-400">Today, 2:30 PM</div>
+                  <div class="text-white font-medium">{{ transaction.description }}</div>
+                  <div class="text-sm text-gray-400">{{ transaction.date }}</div>
                 </div>
               </div>
-              <div class="text-red-400 font-semibold">-$125.50</div>
-            </div>
-
-            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-colors">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="text-white font-medium">Salary</div>
-                  <div class="text-sm text-gray-400">Yesterday, 9:00 AM</div>
-                </div>
+              <div 
+                class="font-semibold"
+                :class="transaction.type === 'income' ? 'text-green-400' : 'text-red-400'"
+              >
+                {{ transaction.type === 'income' ? '+' : '-' }}${{ transaction.amount.toFixed(2) }}
               </div>
-              <div class="text-green-400 font-semibold">+$3,500.00</div>
-            </div>
-
-            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-colors">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="text-white font-medium">Netflix Subscription</div>
-                  <div class="text-sm text-gray-400">Dec 30, 2024</div>
-                </div>
-              </div>
-              <div class="text-red-400 font-semibold">-$15.99</div>
             </div>
           </div>
         </div>
@@ -155,6 +145,12 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  // get info functions
+  // get latest transactions
+})
 
 </script>
 

@@ -99,32 +99,29 @@
             <h3 class="text-xl font-bold text-white">Recent Transactions</h3>
           </div>
           
-          <div class="space-y-4">
+          <div v-if="loading" class="space-y-4">
+            <div
+              v-for="i in 5"
+              :key="i"
+              class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 animate-pulse"
+            >
+              <div class="flex items-center gap-4">
+                <div class="space-y-2">
+                  <div class="h-4 w-32 bg-slate-600/50 rounded"></div>
+                  <div class="h-3 w-24 bg-slate-600/50 rounded"></div>
+                </div>
+              </div>
+              <div class="h-4 w-24 bg-slate-600/50 rounded"></div>
+            </div>
+          </div>
+
+          <div v-else class="space-y-4">
             <div 
-              v-for="transaction in recentTransactions" 
+              v-for="transaction in transactions" 
               :key="transaction.id"
               class="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-colors"
             >
               <div class="flex items-center gap-4">
-                <div 
-                  class="w-10 h-10 rounded-lg flex items-center justify-center"
-                  :class="transaction.type === 'income' ? 'bg-green-500/20' : 'bg-red-500/20'"
-                >
-                  <svg 
-                    class="w-5 h-5" 
-                    :class="transaction.type === 'income' ? 'text-green-400' : 'text-red-400'"
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      stroke-linecap="round" 
-                      stroke-linejoin="round" 
-                      stroke-width="2" 
-                      :d="transaction.icon" 
-                    />
-                  </svg>
-                </div>
                 <div>
                   <div class="text-white font-medium">{{ transaction.description }}</div>
                   <div class="text-sm text-gray-400">{{ transaction.date }}</div>
@@ -134,7 +131,8 @@
                 class="font-semibold"
                 :class="transaction.type === 'income' ? 'text-green-400' : 'text-red-400'"
               >
-                {{ transaction.type === 'income' ? '+' : '-' }}${{ transaction.amount.toFixed(2) }}
+                {{ transaction.account }}
+              {{ transaction.type === 'income' ? '+' : '-' }} P {{ $formatToDecimal(transaction.amount) }}
               </div>
             </div>
           </div>
@@ -145,12 +143,29 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import axios from '../lib/axios';
+
+const loading = ref(false);
+const transactions = ref([]);
 
 onMounted(() => {
-  // get info functions
-  // get latest transactions
+  get_recent_transactions();
 })
+
+async function get_recent_transactions() {
+  loading.value = true;
+
+  try {
+    const response = await axios.post("api/recent_transactions");
+    if (response.data.length > 0) {
+      transactions.value = response.data;
+    }
+  } catch (error) { 
+  }
+
+  loading.value = false;
+}
 
 </script>
 

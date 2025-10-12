@@ -23,10 +23,11 @@ class TransactionController extends Controller
                 return [
                     'id' => $expense->id,
                     'description' => $expense->budget_type_name,
-                    'date' => $expense->expense_date->format('M d, Y g:i A'),
+                    'date' => $expense->expense_date,
                     'amount' => (float) $expense->amount,
                     'type' => 'expense',
-                    'created_at' => $expense->created_at
+                    'created_at' => $expense->created_at,
+                    'account' => $expense->account_name
                 ];
             });
         
@@ -38,15 +39,16 @@ class TransactionController extends Controller
                 return [
                     'id' => $income->id,
                     'description' => $income->budget_type_name,
-                    'date' => $income->income_date->format('M d, Y g:i A'),
+                    'date' => $income->income_date,
                     'amount' => (float) $income->amount,
                     'type' => 'income',
-                    'created_at' => $income->created_at
+                    'created_at' => $income->created_at,
+                    'account' => $income->account_name
                 ];
             });
 
         $data = $expenses->concat($incomes)
-            ->sortByDesc('id')
+            ->sortByDesc('date')
             ->take(5)
             ->values();
         

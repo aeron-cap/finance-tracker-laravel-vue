@@ -13,55 +13,26 @@
 
     <div class="px-4 sm:px-6 lg:px-8 mb-8">
       <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="stat-card group p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm hover:border-blue-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="account in accounts"
+            :key="account.id"
+            class="p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm hover:border-gray-600/50 transition-all"
+          >
             <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <h3 class="text-lg font-semibold text-white">{{ account.name }}</h3>
+              <span
+                class="px-3 py-1 rounded-full text-xs font-medium"
+                :class="account.status_id === 1 ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'"
+              >
+                {{ account.description }}
+              </span>
+            </div>
+            <div class="space-y-2">
+              <div class="text-3xl font-bold text-white">
+                P {{ $formatToDecimal(account.actual_balance) }}
               </div>
             </div>
-            <div class="text-3xl font-bold text-white mb-1">$12,450</div>
-            <div class="text-sm text-gray-400">Total Balance</div>
-          </div>
-          <div class="stat-card group p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/20">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-white mb-1">$8,320</div>
-            <div class="text-sm text-gray-400">Monthly Income</div>
-            <div class="mt-2 text-xs text-green-400">+12.5% from last month</div>
-          </div>
-
-          <div class="stat-card group p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm hover:border-red-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-500/20">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-white mb-1">$5,670</div>
-            <div class="text-sm text-gray-400">Monthly Expenses</div>
-            <div class="mt-2 text-xs text-red-400">+5.2% from last month</div>
-          </div>
-
-          <div class="stat-card group p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                </svg>
-              </div>
-            </div>
-            <div class="text-3xl font-bold text-white mb-1">8</div>
-            <div class="text-sm text-gray-400">Active Budgets</div>
           </div>
         </div>
       </div>
@@ -148,14 +119,14 @@ import axios from '../lib/axios';
 
 const loading = ref(false);
 const transactions = ref([]);
+const accounts = ref([]);
 
 onMounted(() => {
   get_recent_transactions();
+  get_accounts();
 })
 
 async function get_recent_transactions() {
-  loading.value = true;
-
   try {
     const response = await axios.post("api/recent_transactions");
     if (response.data.length > 0) {
@@ -163,8 +134,17 @@ async function get_recent_transactions() {
     }
   } catch (error) { 
   }
+}
 
-  loading.value = false;
+async function get_accounts() {
+  try {
+    const response = await axios.post("api/show-accounts-for-dashboard");
+    console.log("Response", response.data.accounts);
+    if (response.data.accounts.length > 0) {
+      accounts.value = response.data.accounts;
+    }
+  } catch (error) {
+  }
 }
 
 </script>

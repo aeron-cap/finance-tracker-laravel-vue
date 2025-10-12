@@ -216,4 +216,75 @@ class AccountController extends Controller
             'breakdown_summary' => $breakdown_summary,
         ], 200);
     }
+
+    public function add_to_dashboard(Request $request) {
+        $user = $request->user();
+        $id = $request->get('id');
+        $value = $request->get('value');
+        
+        if ($value == 1) {
+            $already_in_dashboard = Account::where('user_id', $user->id)
+                ->where('show_in_dashboard', 1)
+                ->count();
+                
+            if ($already_in_dashboard >= 4) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only display up to 4 accounts on the dashboard',
+                ], 400);
+            }
+            
+            $account = Account::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+                
+            if (!$account) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Account not found',
+                ], 404);
+            }
+            
+            $account->update(['show_in_dashboard' => $value]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Account added to dashboard',
+            ], 200);
+            
+        } else if ($value == 0) {
+            $account = Account::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+                
+            if (!$account) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Account not found',
+                ], 404);
+            }
+            
+            $account->update(['show_in_dashboard' => $value]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Account removed from dashboard',
+            ], 200);
+            
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid value',
+            ], 400);
+        }
+    }
+
+    public function accounts_for_dashboard(Request $request) {
+
+      $user = $request->user();
+
+      $accounts = Account::where('user_id', $user->id)->where('show_in_dashboard', 1)->with(['status'])->get();
+      
+      return response()->json(['accounts' => $accounts]);
+    }
 }

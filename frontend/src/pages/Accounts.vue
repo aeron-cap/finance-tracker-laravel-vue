@@ -58,9 +58,20 @@
                                                 {{ account.status.name }}
                                             </span>
                                         </div>
-                                        <p class="text-sm text-gray-400 line-clamp-2">
-                                            {{ account.description }}
-                                        </p>
+                                        <div class="flex items-start justify-between">
+                                          <p class="text-sm text-gray-400 line-clamp-2">
+                                              {{ account.description }}
+                                          </p>
+                                          <div class="flex items-center space-x-2">
+                                              <label class="text-xs font-medium text-gray-500">Show in Dashboard</label>
+                                              <input
+                                                type="checkbox"
+                                                :checked="account.show_in_dashboard === 1"
+                                                class="w-4 h-4 text-blue-600 bg-slate-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2 transition-all duration-200"
+                                                @click="show_in_dashboard(account.id, $event.target.checked ? 1 : 0)"
+                                              />
+                                          </div>
+                                        </div>
                                     </div>
 
                                     <div class="px-6 py-4">
@@ -296,6 +307,18 @@ async function show_breakdown(id) {
       id_to_breakdown.value = 0;
       breakdown_summary.value[0] = [];
     }
+}
+
+function show_in_dashboard(id, value) {
+  try {
+    const response = axios.post('api/add-to-dashboard', {
+      id: id,
+      value: value
+    });
+    get_all_accounts();
+  } catch (error) {
+
+  }
 }
 </script>
 

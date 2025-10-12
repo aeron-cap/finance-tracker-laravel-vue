@@ -56,6 +56,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/update-balance/{id}', 'update_balance');
         Route::post('/show-account-breakdown/{id}', 'show_breakdown');
+
+        Route::post('/add-to-dashboard', 'add_to_dashboard');
+        Route::post('/show-accounts-for-dashboard', 'accounts_for_dashboard');
     });
 
     Route::controller(ExpenseController::class)->group(function () {

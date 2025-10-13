@@ -228,7 +228,7 @@ function accept_action() {
     return;
   }
 
-  if(breakdown_to_save.value[account_name].length > 0) {
+  if(breakdown_to_save.value[account_name] == null) {
     build_breakdown_data(breakdown_to_save.value[account_name], "save");
   }
 

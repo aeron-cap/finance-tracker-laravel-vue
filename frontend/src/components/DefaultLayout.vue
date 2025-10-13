@@ -160,6 +160,7 @@
     { name: 'Expenses', to: {name: 'Expenses'}},
     { name: 'Accounts', to: {name: 'Accounts'}},
     // { name: 'Investments', to: {name: 'Investments'}},
+    // Add Saving Goals new module
   ];
 
   const currentPageTitle = computed(() => {

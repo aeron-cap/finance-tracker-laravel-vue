@@ -51,13 +51,37 @@
           </div>
 
           <div class="p-6 rounded-2xl bg-slate-800/50 border border-gray-700/50 backdrop-blur-sm">
-            <h3 class="text-xl font-bold text-white mb-4">Show 1 Budget Here</h3>
-            <div class="h-64 flex items-center justify-center text-gray-500">
-              <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-              </svg>
-            </div>
+              <select
+                v-model="selectedBudget"
+                @change="update_budget_graph"
+                class="bg-slate-700 text-white px-3 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Select Budget</option>
+                <option
+                  v-for="budget in budgets"
+                  :key="budget.id"
+                  :value="budget"
+                >
+                  {{ budget.budget_name }}
+                </option>
+              </select>
+
+              <div
+                class="mt-4 flex items-center justify-center w-full max-w-xs h-64 mx-auto"
+              >
+                <PieChart
+                  v-if="chartData"
+                  :chartData="chartData"
+                  :chartOptions="chartOptions"
+                  class="w-60 h-60"
+                />
+                <span
+                  v-else
+                  class="text-gray-400 text-sm"
+                >
+                  Select a budget to display the chart
+                </span>
+              </div>
           </div>
         </div>
       </div>
@@ -116,14 +140,19 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from '../lib/axios';
+import PieChart from '../components/PieChart.vue';
 
 const loading = ref(false);
 const transactions = ref([]);
 const accounts = ref([]);
+const budgets = ref([]);
+const chartData = ref(null);
+const selectedBudget = ref('');
 
 onMounted(() => {
   get_recent_transactions();
   get_accounts();
+  get_budgets();
 })
 
 async function get_recent_transactions() {
@@ -139,12 +168,67 @@ async function get_recent_transactions() {
 async function get_accounts() {
   try {
     const response = await axios.post("api/show-accounts-for-dashboard");
-    console.log("Response", response.data.accounts);
     if (response.data.accounts.length > 0) {
       accounts.value = response.data.accounts;
     }
   } catch (error) {
   }
+}
+
+async function get_budgets() {
+  try {
+    const response = await axios.get("api/budgets");
+    if (response.data.budgets.length > 0) {
+      budgets.value = response.data.budgets;
+
+      budgets.value.forEach(element => {
+        if (element.is_default == 1) {
+          selectedBudget.value = element;
+          update_budget_graph();
+        }
+      });
+    }
+  }catch (error) {
+  }
+}
+
+function update_budget_graph() {
+  chartData.value = show_budget_graph(selectedBudget.value)
+}
+
+function show_budget_graph(budget) {
+  let budget_details = budget.budget_details || [];
+  let type_amounts = {};
+
+  budget_details.forEach(i => {
+    if (!type_amounts[i.type]) {
+      type_amounts[i.type] = 0;
+    }
+    type_amounts[i.type] += i.amount;
+  });
+
+  const labels = Object.keys(type_amounts);
+  const values = Object.values(type_amounts);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Budget',
+        data: values,
+        backgroundColor: generate_colors(labels.length),
+      }
+    ]
+  }
+}
+
+function generate_colors(count) {
+  const colors = []
+  for (let i = 0; i < count; i++) {
+    const hue = Math.floor(Math.random() * 360)
+    colors.push(`hsl(${hue}, 70%, 60%)`)
+  }
+  return colors
 }
 
 </script>

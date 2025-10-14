@@ -36,7 +36,7 @@ const router = createRouter({
             children: [
                 {path: '/dashboard', name:'Home', component: Home},
                 {path: '/budgets', name:'Budgets', component: Budgets},
-                // {path: '/investments', name:'Investments', component: Investments},
+                {path: '/investments', name:'Investments', component: Investments},
                 {path: '/accounts', name:'Accounts', component: Accounts},
                 {path: '/incomes', name: 'Incomes', component: Incomes},
                 {path: '/expenses', name: 'Expenses', component: Expenses}

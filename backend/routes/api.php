@@ -87,17 +87,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
 });
-
-// Route::controller(OrderController::class)->group(function () {
-//     Route::get('/orders/{id}', 'show');
-//     Route::post('/orders', 'store');
-// });
-
-
-// Route::middleware(['first', 'second'])->group(function () {
-//     Route::get('/', function () {
-//     });
-
-//     Route::get('/user/profile', function () {
-//     });
-// });

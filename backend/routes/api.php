@@ -11,6 +11,7 @@ use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\TransactionController;
 
 // Route::controller(AuthController::class)->group(function () {
@@ -84,6 +85,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(TransactionController::class)->group(function () {
         Route::post('/recent_transactions', 'recent');
+    });
+
+    Route::controller(InvestmentController::class)->group(function () {
+        Route::get('/investment/{id}', 'show');
+        Route::get('/investment', 'index');
+        Route::post('/investment', 'store');
+        Route::post('/investment/{id}', 'update');
+        Route::post('/investment-delete/{id}', 'destroy');
     });
 
 });

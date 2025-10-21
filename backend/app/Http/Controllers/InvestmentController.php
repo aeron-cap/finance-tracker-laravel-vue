@@ -36,15 +36,54 @@ class InvestmentController extends Controller
         //
         $user = $request->user();
 
+        $goal = $request->validate([
+          'name' => 'required',
+          'budget_id' => 'required',
+          'budget_name' => 'required',
+          'amount' => 'required|numeric',
+          'budget_type_id' => 'required',
+          'budget_type_name' => 'required',
+          'account_id' => 'required',
+          'account_name' => 'required',
+          'status_id' => 'required',
+          'status_name' => 'required',
+          'investment_type_id' => 'required',
+          'investment_type_name' => 'required',
+        ]);
+
+        $g = auto_create(Investment::class, $goal, ['user_id', $user->id]);
+
+        if ($g->save()) {
+          return response()->json([
+            'message' => "Investment created successfully.",
+            'goal' => $goal,
+          ], 201);
+        } else {
+          return response()->json(['message' => "Failed to create Investment"], 500);
+        }
         
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
         //
+        $user = $request->user();
+        $account = Investment::where('id', $id)->with('status')->where('user_id', $user->id)->first();
+
+        if (!$account) {
+            return response()->json([
+                'message' => 'Account not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Account found',
+            'account' => $account,
+        ], 200);
+        
     }
 
     /**
@@ -53,13 +92,57 @@ class InvestmentController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $user = $request->user();
+
+        $goal = $request->validate([
+          'name' => 'required',
+          'budget_id' => 'required',
+          'budget_name' => 'required',
+          'amount' => 'required|numeric',
+          'budget_type_id' => 'required',
+          'budget_type_name' => 'required',
+          'account_id' => 'required',
+          'account_name' => 'required',
+          'status_id' => 'required',
+          'status_name' => 'required',
+          'investment_type_id' => 'required',
+          'investment_type_name' => 'required',
+        ]);
+
+        $existing_g = Investment::where('id', $id)->first();
+
+        $g = auto_update($existing_g, $goal, ['user_id' => $user->id]);
+
+        if ($g->update()){
+          return response()->json([
+              'message' => 'Investment updated successfully',
+              'goal' => $g,
+          ], 201);
+        } else {
+          return response()->json(['message' => 'Failed to edit investment'], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         //
+      $user = $request->user();
+
+      $investment = Investment::where('id', $id)->where('user_id', $user->id)->first();
+
+      if (!$investment) {
+        return response()->json([
+          'message' => 'Investment not found',
+        ], 404);
+      } else {
+        $investment->delete();
+
+        return response()->json([
+          'message' => 'Investment deleted',
+        ], 200);
+      }
     }
 }

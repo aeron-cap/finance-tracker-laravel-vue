@@ -99,7 +99,7 @@ class AccountController extends Controller
             'breakdown' => 'nullable|string',
         ]);
 
-        $existing_a = Account::where('id', $id)->first();
+        $existing_a = Account::where('id', $id)->where('user_id', $user->id)->first();
 
         $a = auto_update($existing_a, $account, ['user_id' => $user->id]);
 
@@ -119,7 +119,9 @@ class AccountController extends Controller
     public function destroy(string $id, Request $request)
     {
         //
-      $account = Account::find($id);
+      $user = $request->user();
+
+      $account = Account::where('id', $id)->where('user_id', $user->id)->first();
 
       if (!$account) {
         return response()->json([
